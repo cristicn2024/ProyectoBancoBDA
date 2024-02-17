@@ -30,9 +30,9 @@ public class ClienteForm extends javax.swing.JDialog {
     Domicilio domicilio;
     IConexionBD conexionBD;
     private static final Logger LOG = Logger.getLogger(ClienteDAO.class.getName());
-    String cadenaConexion = "jdbc:mysql://localhost/ProyectoBanco";
+    String cadenaConexion = "jdbc:mysql://localhost:3306/ProyectoBanco_v1";
     String usuario = "root";
-    String contra = "Jorgitoel04.";
+    String contra = "78357Cas";
     IClienteDAO clienteDAO;
 
     /**
@@ -96,13 +96,14 @@ public class ClienteForm extends javax.swing.JDialog {
         getContentPane().add(txtColonia, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 342, 110, 15));
         getContentPane().add(txtCalle, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 320, 130, 15));
 
-        btnCancelar.setText("CANCELAR");
+        btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/arrow-left_90947CHICA.png"))); // NOI18N
+        btnCancelar.setContentAreaFilled(false);
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 410, 89, -1));
+        getContentPane().add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 410, 89, -1));
 
         jLabel1.setBackground(new java.awt.Color(255, 153, 204));
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
