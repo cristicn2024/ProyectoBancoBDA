@@ -2,9 +2,11 @@ Dominio\Cuenta.class
 Presentacion\InicioSesion$3.class
 Dominio\Domicilio.class
 Persistencia\Conexion\IConexionBD.class
+Presentacion\ClienteForm$4.class
 Persistencia\Conexion\ConexionBD.class
 Presentacion\ClienteForm$1.class
 Persistencia\DAOS\ClienteDAO.class
+Presentacion\InicioSesion$4.class
 Persistencia\Conexion\DTO\DomicilioNuevoDTO.class
 Persistencia\Excepciones\PersistenciaException.class
 Presentacion\InicioSesion.class
