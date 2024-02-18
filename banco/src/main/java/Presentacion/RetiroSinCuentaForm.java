@@ -12,10 +12,13 @@ import static Persistencia.Controlador.Utilerias.ContraseñaRandom.generarContra
 import Persistencia.DAOS.ClienteDAO;
 import Persistencia.DAOS.IClienteDAO;
 import Persistencia.Excepciones.PersistenciaException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 
 /**
  *
@@ -23,7 +26,10 @@ import javax.swing.JOptionPane;
  */
 public class RetiroSinCuentaForm extends javax.swing.JFrame {
 
-    private int contadorFolio = 1; 
+    private int folioGenerado; 
+    private String contraseñaGenerada;
+    private Timer temporizador;
+    private boolean aceptarPendiente= true;
 
     private static final Logger LOG = Logger.getLogger(ClienteDAO.class.getName());
     String cadenaConexion = "jdbc:mysql://localhost:3306/ProyectoBanco";
@@ -122,7 +128,17 @@ public class RetiroSinCuentaForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void aceptarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarBotonActionPerformed
+    folioGenerado = Integer.parseInt(txtFolio.getText());
+    contraseñaGenerada = txtContraseña.getText();
     
+        try {
+            
+            clienteDAO.actualizarEstadoTransaccionesRetirosSinCuenta(folioGenerado, contraseñaGenerada, "cobrado");
+           
+        } catch (PersistenciaException ex) {
+            Logger.getLogger(RetiroSinCuentaForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }//GEN-LAST:event_aceptarBotonActionPerformed
 
     

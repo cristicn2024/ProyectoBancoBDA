@@ -53,5 +53,13 @@ public interface IClienteDAO {
     public String obtenerContraseñaEncriptada(String usuario) throws SQLException;
 
      public Transferencia TransferirFeria(TransferenciaNuevaDTO transferencia) throws PersistenciaException;
+     
+     public double obtenerSaldoCuenta(int noCuenta) throws PersistenciaException;
+     
+     public void actualizarSaldoCuenta(int noCuenta, double nuevoSaldo) throws PersistenciaException;
+     
+      public boolean validarFolioYContraseña(int folio, String contraseña) throws PersistenciaException; 
+      
+      public void actualizarEstadoTransaccionesRetirosSinCuenta(int folio, String contraseña, String estado) throws PersistenciaException;
 }
 

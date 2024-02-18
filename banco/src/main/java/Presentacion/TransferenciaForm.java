@@ -56,6 +56,7 @@ public class TransferenciaForm extends javax.swing.JFrame {
         txtNodeCuentaDestino = new javax.swing.JTextField();
         txtUsuario = new javax.swing.JTextField();
         txtMonto = new javax.swing.JTextField();
+        cancelarBoton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -94,6 +95,9 @@ public class TransferenciaForm extends javax.swing.JFrame {
             }
         });
 
+        cancelarBoton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        cancelarBoton.setText("Cancelar");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -103,11 +107,16 @@ public class TransferenciaForm extends javax.swing.JFrame {
                 .addComponent(aceptarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(45, 45, 45))
             .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(62, 62, 62)
+                        .addGap(25, 25, 25)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(34, 34, 34)
+                                .addComponent(cancelarBoton))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(141, 141, 141)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
@@ -129,14 +138,14 @@ public class TransferenciaForm extends javax.swing.JFrame {
                                 .addComponent(jLabel3)
                                 .addGap(18, 18, 18)
                                 .addComponent(txtNodeCuentaDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(202, Short.MAX_VALUE))
+                .addContainerGap(148, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addComponent(jLabel1)
-                .addGap(22, 22, 22)
+                .addGap(33, 33, 33)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -152,23 +161,25 @@ public class TransferenciaForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
                     .addComponent(txtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
-                .addComponent(aceptarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(aceptarBoton, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
+                    .addComponent(cancelarBoton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(25, 25, 25))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void aceptarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarBotonActionPerformed
         // TODO add your handling code here:
-        
-         String nombreUsuario = txtUsuario.getText(); // Obtener el numero de cuenta del usuario del campo de texto
+        String nombreUsuario = txtUsuario.getText(); // Obtener el numero de cuenta del usuario del campo de texto
 
     try {
         int idCliente = clienteDAO.obtenerIdClientePorUsuario(nombreUsuario);
 
-       TransferenciaNuevaDTO transferenciaDTO = new TransferenciaNuevaDTO();
+        TransferenciaNuevaDTO transferenciaDTO = new TransferenciaNuevaDTO();
         transferenciaDTO.setMonto(Double.parseDouble(txtMonto.getText()));
         transferenciaDTO.setNoCuenta(Integer.parseInt(txtNodeCuenta.getText())); // Usar el valor actual del contador como folio y luego incrementarlo en uno
         transferenciaDTO.setNoCuentaDestino(Integer.parseInt(txtNodeCuentaDestino.getText())); // Generar una contraseña aleatoria de 8 caracteres
@@ -176,16 +187,42 @@ public class TransferenciaForm extends javax.swing.JFrame {
         transferenciaDTO.setFechaHora(LocalDateTime.now());
 
         Transferencia transferenciaAgregada = clienteDAO.TransferirFeria(transferenciaDTO);
+        
+        //try catch para actualizar los saldos
+        try {
+            // Obtener los saldos actuales de las cuentas de origen y destino
+            double saldoOrigen = clienteDAO.obtenerSaldoCuenta(transferenciaDTO.getNoCuenta());
+            double saldoDestino = clienteDAO.obtenerSaldoCuenta(transferenciaDTO.getNoCuentaDestino());
+
+            // Restar el monto de la transferencia del saldo de la cuenta de origen
+            double nuevoSaldoOrigen = saldoOrigen - transferenciaDTO.getMonto();
+
+            // Sumar el monto de la transferencia al saldo de la cuenta de destino
+            double nuevoSaldoDestino = saldoDestino + transferenciaDTO.getMonto();
+
+            // Actualizar los saldos en la base de datos
+            clienteDAO.actualizarSaldoCuenta(transferenciaDTO.getNoCuenta(), nuevoSaldoOrigen);
+            clienteDAO.actualizarSaldoCuenta(transferenciaDTO.getNoCuentaDestino(), nuevoSaldoDestino);
+
+            // Si todo se realiza correctamente, mostrar un mensaje de éxito
+            JOptionPane.showMessageDialog(null, "Transferencia generada con éxito");
+
+        } catch (PersistenciaException ex) {
+            LOG.log(Level.SEVERE, "No se pudo realizar la transferencia", ex);
+            JOptionPane.showMessageDialog(null, "Error al realizar la transferencia.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
 
         if (transferenciaAgregada != null) {
-            JOptionPane.showMessageDialog(this, "Transferencia generada con éxito" );
+            JOptionPane.showMessageDialog(this, "Transferencia generada con éxito");
         } else {
             JOptionPane.showMessageDialog(this, "Error al realizar la transferencia.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-     
+
     } catch (PersistenciaException e) {
-        LOG.log(Level.SEVERE, "No se pudo realizar la trasnferencia", e);
+        LOG.log(Level.SEVERE, "No se pudo realizar la transferencia", e);
     }
+
+
     }//GEN-LAST:event_aceptarBotonActionPerformed
 
     private void txtNodeCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNodeCuentaActionPerformed
@@ -200,6 +237,7 @@ public class TransferenciaForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aceptarBoton;
+    private javax.swing.JButton cancelarBoton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

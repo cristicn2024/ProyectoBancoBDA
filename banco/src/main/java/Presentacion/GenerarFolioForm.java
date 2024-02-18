@@ -149,8 +149,8 @@ retiroDTO.setFechaHora(LocalDateTime.now());
         LOG.log(Level.SEVERE, "No se pudo realizar el retiro sin cuenta", e);
     }
     }//GEN-LAST:event_aceptarBotonActionPerformed
-
     
+     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aceptarBoton;
     private javax.swing.JLabel jLabel1;

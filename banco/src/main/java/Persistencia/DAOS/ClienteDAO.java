@@ -306,4 +306,75 @@ String sentenciaSQL = "INSERT INTO CLIENTES (nombre, apellidoPaterno, apellidoMa
     }
     }
     
+    public double obtenerSaldoCuenta(int noCuenta) throws PersistenciaException {
+    try (Connection connection = this.conexionBD.crearConexion();
+         PreparedStatement statement = connection.prepareStatement("SELECT saldo FROM cuentas WHERE idCuenta = ?")) {
+        statement.setInt(1, noCuenta);
+        try (ResultSet resultSet = statement.executeQuery()) {
+            if (resultSet.next()) {
+                return resultSet.getDouble("saldo");
+            } else {
+                throw new PersistenciaException("No se encontró la cuenta con el número especificado");
+            }
+        }
+    } catch (SQLException e) {
+        throw new PersistenciaException("Error al obtener el saldo de la cuenta", e);
+    }
+}
+
+public void actualizarSaldoCuenta(int noCuenta, double nuevoSaldo) throws PersistenciaException {
+    try (Connection connection = this.conexionBD.crearConexion();
+         PreparedStatement statement = connection.prepareStatement("UPDATE cuentas SET saldo = ? WHERE idCuenta = ?")) {
+        statement.setDouble(1, nuevoSaldo);
+        statement.setInt(2, noCuenta);
+        int rowsAffected = statement.executeUpdate();
+        if (rowsAffected != 1) {
+            throw new PersistenciaException("No se pudo actualizar el saldo de la cuenta");
+        }
+    } catch (SQLException e) {
+        throw new PersistenciaException("Error al actualizar el saldo de la cuenta", e);
+    }
+}
+
+    @Override
+    public boolean validarFolioYContraseña(int folio, String contraseña) throws PersistenciaException {
+        try (Connection connection = this.conexionBD.crearConexion();
+         PreparedStatement statement = connection.prepareStatement("SELECT * FROM transaccionRetirosSinCuenta WHERE folio = ? AND contraseña = ?")) {
+        statement.setInt(1, folio);
+        statement.setString(2, contraseña);
+        try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+        }
+    } catch (SQLException e) {
+        throw new PersistenciaException("Error al validar el folio y la contraseña", e);
+    }
+    }
+
+    @Override
+    public void actualizarEstadoTransaccionesRetirosSinCuenta(int folio, String contraseña, String estado) throws PersistenciaException {
+      System.out.print("Actualizando estado de transaaciion con folio: "+folio+"contraseña:"+contraseña+"estado:" + estado);
+        try (Connection connection = this.conexionBD.crearConexion();
+         PreparedStatement statement = connection.prepareStatement("UPDATE transaccionRetirosSinCuenta SET estado = ? WHERE folio = ? AND contraseña = ?")) {
+        statement.setString(1, estado);
+        statement.setInt(2, folio);
+        statement.setString(3, contraseña);
+        int rowsAffected = statement.executeUpdate();
+        if (rowsAffected != 1) {
+            throw new PersistenciaException("No se pudo actualizar el estado de la transacción");
+        }
+        System.out.print("Actualizacion exitosa. Filas Afectadas:" + rowsAffected);
+    } catch (SQLException e) {
+        throw new PersistenciaException("Error al actualizar el estado de la transacción", e);
+    }
+    }
+    
+    
+    
+
+
+
+
+
+
+
 }
