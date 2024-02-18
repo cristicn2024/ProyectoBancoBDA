@@ -217,6 +217,23 @@ String sentenciaSQL = "INSERT INTO CLIENTES (nombre, apellidoPaterno, apellidoMa
     }
     
     }
+    
+     public boolean verificarCredenciales(String usuario, String contraseñaEncriptada) {
+    try {
+        Connection conexion = conexionBD.crearConexion();
+        String query = "SELECT COUNT(*) FROM Clientes WHERE usuario = ? AND contraseña = ?";
+        PreparedStatement ps = conexion.prepareStatement(query);
+        ps.setString(1, usuario);
+        ps.setString(2, contraseñaEncriptada);
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        int count = rs.getInt(1);
+        return count == 1;
+    } catch (SQLException ex) {
+        LOG.log(Level.SEVERE, "Error al verificar las credenciales", ex);
+        return false;
+    }
+    }
 
   
 }

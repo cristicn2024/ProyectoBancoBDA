@@ -4,16 +4,40 @@
  */
 package Presentacion;
 
+import Persistencia.Conexion.ConexionBD;
+import Persistencia.Conexion.IConexionBD;
+import Persistencia.DAOS.ClienteDAO;
+import Persistencia.DAOS.IClienteDAO;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  * Esta clase representa la interfaz de iniciar sesion
  * @author INEGI
  */
 public class InicioSesion extends javax.swing.JFrame {
 
+      IConexionBD conexionBD;
+int idCliente;
+private IClienteDAO clienteDAO;
+    private static final Logger LOG = Logger.getLogger(ClienteDAO.class.getName());
+  
     /**
      * Creates new form InicioSesion
      */
     public InicioSesion() {
+        
+        String cadenaConexion = "jdbc:mysql://localhost:3306/ProyectoBanco";
+        String usuario = "root";
+        String contra = "78357Cas";
+        IConexionBD conexionBD = new ConexionBD(cadenaConexion, usuario, contra);
+        clienteDAO = new ClienteDAO(conexionBD);
         initComponents();
     }
 
@@ -99,7 +123,33 @@ public class InicioSesion extends javax.swing.JFrame {
 
     private void aceptarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarBotonActionPerformed
         // TODO add your handling code here:
+      /*  String usuario = txtUsuario.getText();
+    String contraseña = txtContraseña.getText();
+    ClienteForm clientes = new ClienteForm(null, true);
+   
+          try {
+              String contraseñaEncriptada;
+              contraseñaEncriptada = clientes.encriptarContraseña(contraseña);
+         
+        if (clienteDAO.verificarCredenciales(usuario, contraseñaEncriptada)) {
+            // Código para abrir el siguiente formulario
+            // Por ejemplo:
+            CuentasForm cuentas = new CuentasForm(idCliente);
+            cuentas.setVisible(true);
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos");
+        }
+    } catch (Exception ex) {
+        LOG.log(Level.SEVERE, "Error al verificar las credenciales", ex);
+        JOptionPane.showMessageDialog(this, "Error al verificar las credenciales");
+    }*/
+      CuentasForm cuentas = new CuentasForm(idCliente);
+            cuentas.setVisible(true);
+            this.dispose();
     }//GEN-LAST:event_aceptarBotonActionPerformed
+
+   
 
     /**
      * @param args the command line arguments

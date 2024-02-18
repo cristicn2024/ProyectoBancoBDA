@@ -45,6 +45,8 @@ public interface IClienteDAO {
     
     public int obtenerIdClientePorUsuario(String nombreUsuario) throws PersistenciaException;
     
+    public boolean verificarCredenciales(String usuario, String contraseñaEncriptada) throws PersistenciaException;
+    
   
 }
 
