@@ -139,7 +139,7 @@ retiroDTO.setFechaHora(LocalDateTime.now());
         Retiro retiroAgregado = clienteDAO.RetirarFeria(retiroDTO);
 
         if (retiroAgregado != null) {
-            JOptionPane.showMessageDialog(this, "Retiro realizado con éxito.\nFolio: " + retiroDTO.getFolio() +
+            JOptionPane.showMessageDialog(this, "Folio generado con éxito.\nFolio: " + retiroDTO.getFolio() +
                     "\nContraseña: " + retiroDTO.getContraseña()+"\nFecha  y hora: "+retiroDTO.getFechaHora() );
         } else {
             JOptionPane.showMessageDialog(this, "Error al realizar el retiro.", "Error", JOptionPane.ERROR_MESSAGE);

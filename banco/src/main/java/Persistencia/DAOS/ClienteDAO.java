@@ -8,10 +8,12 @@ import Dominio.Cliente;
 import Dominio.Cuenta;
 import Dominio.Domicilio;
 import Dominio.Retiro;
+import Dominio.Transferencia;
 import Persistencia.Conexion.DTO.ClienteNuevoDTO;
 import Persistencia.Conexion.DTO.CuentaNuevaDTO;
 import Persistencia.Conexion.DTO.DomicilioNuevoDTO;
 import Persistencia.Conexion.DTO.RetiroNuevoDTO;
+import Persistencia.Conexion.DTO.TransferenciaNuevaDTO;
 import Persistencia.Conexion.IConexionBD;
 import Persistencia.Excepciones.PersistenciaException;
 import java.security.NoSuchAlgorithmException;
@@ -219,12 +221,12 @@ String sentenciaSQL = "INSERT INTO CLIENTES (nombre, apellidoPaterno, apellidoMa
     }
     
      public boolean verificarCredenciales(String usuario, String contraseñaEncriptada) {
-    try {
+ try {
         Connection conexion = conexionBD.crearConexion();
         String query = "SELECT COUNT(*) FROM Clientes WHERE usuario = ? AND contraseña = ?";
         PreparedStatement ps = conexion.prepareStatement(query);
         ps.setString(1, usuario);
-        ps.setString(2, contraseñaEncriptada);
+        ps.setString(2, contraseñaEncriptada); // La contraseña ya está encriptada con SHA-1
         ResultSet rs = ps.executeQuery();
         rs.next();
         int count = rs.getInt(1);
@@ -235,5 +237,73 @@ String sentenciaSQL = "INSERT INTO CLIENTES (nombre, apellidoPaterno, apellidoMa
     }
     }
 
-  
+  public String obtenerContraseñaEncriptada(String usuario) throws SQLException {
+    String contraseñaEncriptada = null;
+
+    Connection conexion = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+
+    try {
+        conexion = conexionBD.crearConexion();
+        String query = "SELECT contraseña FROM Clientes WHERE usuario = ?";
+        ps = conexion.prepareStatement(query);
+        ps.setString(1, usuario);
+        rs = ps.executeQuery();
+
+        if (rs.next()) {
+            contraseñaEncriptada = rs.getString("contraseña");
+        }
+    } finally {
+        if (rs != null) {
+            rs.close();
+        }
+        if (ps != null) {
+            ps.close();
+        }
+        if (conexion != null) {
+            conexion.close();
+        }
+    }
+
+    return contraseñaEncriptada;
+}
+
+   
+    public Transferencia TransferirFeria(TransferenciaNuevaDTO transferencia) throws PersistenciaException {
+      String sentenciaSQL = "INSERT INTO transaccionTransferencias (FechaHora, monto, noCuentaDestino, IdCliente, noCuenta) "
+            + "VALUES (?, ?, ?, ?, ?)";
+    try (Connection conexion = this.conexionBD.crearConexion();
+         PreparedStatement comandoSQL = conexion.prepareStatement(sentenciaSQL, Statement.RETURN_GENERATED_KEYS)) {
+
+        comandoSQL.setObject(1, LocalDateTime.now());
+        comandoSQL.setDouble(2, transferencia.getMonto());
+        comandoSQL.setInt(3, transferencia.getNoCuentaDestino());
+        comandoSQL.setInt(4, transferencia.getIdCliente());
+        comandoSQL.setInt(5, transferencia.getNoCuenta());
+        
+
+        int registrosModificados = comandoSQL.executeUpdate();
+        LOG.log(Level.INFO, "Se agregó con éxito {0} transferencia(s) ", registrosModificados);
+
+        ResultSet registroGenerado = comandoSQL.getGeneratedKeys();
+        int idTransaccion;
+        if (registroGenerado.next()) {
+            idTransaccion = registroGenerado.getInt(1);
+            LOG.log(Level.INFO, "ID de la transacción generada: {0}", idTransaccion);
+        } else {
+            LOG.log(Level.WARNING, "No se pudo obtener el ID de la transacción generada");
+            throw new PersistenciaException("No se pudo obtener el ID de la transacción generada");
+        }
+
+        // Crear un objeto Retiro con la información obtenida
+        Transferencia transferenciaGenerada = new Transferencia(idTransaccion, LocalDateTime.now(), transferencia.getMonto(), transferencia.getNoCuentaDestino(), transferencia.getIdCliente(), transferencia.getNoCuenta());
+        
+        return transferenciaGenerada;
+    } catch (Exception e) {
+        LOG.log(Level.SEVERE, "No se pudo agregar la transferencia", e);
+        throw new PersistenciaException("No se pudo guardar la transferenia", e);
+    }
+    }
+    
 }

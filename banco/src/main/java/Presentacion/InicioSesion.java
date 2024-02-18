@@ -6,6 +6,7 @@ package Presentacion;
 
 import Persistencia.Conexion.ConexionBD;
 import Persistencia.Conexion.IConexionBD;
+import Persistencia.Controlador.Utilerias.Sesion;
 import Persistencia.DAOS.ClienteDAO;
 import Persistencia.DAOS.IClienteDAO;
 import java.security.NoSuchAlgorithmException;
@@ -93,6 +94,11 @@ private IClienteDAO clienteDAO;
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 190, 88, 25));
 
         btnRetiroSinCuenta.setText("Retirar sin cuenta");
+        btnRetiroSinCuenta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRetiroSinCuentaActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnRetiroSinCuenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 350, 140, 40));
 
         aceptarBoton.setText("Aceptar");
@@ -122,32 +128,44 @@ private IClienteDAO clienteDAO;
     }//GEN-LAST:event_txtContraseñaActionPerformed
 
     private void aceptarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarBotonActionPerformed
-        // TODO add your handling code here:
-      /*  String usuario = txtUsuario.getText();
+       String usuario = txtUsuario.getText();
     String contraseña = txtContraseña.getText();
-    ClienteForm clientes = new ClienteForm(null, true);
-   
-          try {
-              String contraseñaEncriptada;
-              contraseñaEncriptada = clientes.encriptarContraseña(contraseña);
-         
-        if (clienteDAO.verificarCredenciales(usuario, contraseñaEncriptada)) {
-            // Código para abrir el siguiente formulario
-            // Por ejemplo:
-            CuentasForm cuentas = new CuentasForm(idCliente);
-            cuentas.setVisible(true);
-            this.dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos");
-        }
+   /* ClienteForm clientes = new ClienteForm(null, true);
+    
+    
+        try {
+            // Obtener la contraseña encriptada de la base de datos
+            String contraseñaEncriptadaDB = clienteDAO.obtenerContraseñaEncriptada(usuario);
+            System.out.println("Contraseña encriptada de la base de datos: " + contraseñaEncriptadaDB);
+
+
+// Verificar las credenciales
+            if (contraseñaEncriptadaDB != null && contraseñaEncriptadaDB.equals(contraseña)) {
+                System.out.println("Contraseñas encriptadas coinciden. Iniciando sesión...");
+                // Código para abrir el siguiente formulario
+                CuentasForm cuentas = new CuentasForm(idCliente);
+                cuentas.setVisible(true);
+                this.dispose();
+            } else {
+                System.out.println("Contraseñas encriptadas no coinciden. Usuario o contraseña incorrectos.");
+                JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos");
+            }
     } catch (Exception ex) {
         LOG.log(Level.SEVERE, "Error al verificar las credenciales", ex);
         JOptionPane.showMessageDialog(this, "Error al verificar las credenciales");
     }*/
-      CuentasForm cuentas = new CuentasForm(idCliente);
-            cuentas.setVisible(true);
-            this.dispose();
+     Sesion sesion = new Sesion();
+     sesion.setUsuario(usuario);
+     CuentasForm cuentas = new CuentasForm(idCliente);
+                cuentas.setVisible(true);
+                this.dispose();
     }//GEN-LAST:event_aceptarBotonActionPerformed
+
+    private void btnRetiroSinCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRetiroSinCuentaActionPerformed
+        // TODO add your handling code here:
+        RetiroSinCuentaForm rscf = new RetiroSinCuentaForm();
+        rscf.setVisible(true);
+    }//GEN-LAST:event_btnRetiroSinCuentaActionPerformed
 
    
 

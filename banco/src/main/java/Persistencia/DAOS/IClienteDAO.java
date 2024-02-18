@@ -8,12 +8,15 @@ import Dominio.Cliente;
 import Dominio.Cuenta;
 import Dominio.Domicilio;
 import Dominio.Retiro;
+import Dominio.Transferencia;
 import Persistencia.Conexion.DTO.ClienteNuevoDTO;
 import Persistencia.Conexion.DTO.CuentaNuevaDTO;
 import Persistencia.Conexion.DTO.DomicilioNuevoDTO;
 import Persistencia.Conexion.DTO.RetiroNuevoDTO;
+import Persistencia.Conexion.DTO.TransferenciaNuevaDTO;
 import Persistencia.Excepciones.PersistenciaException;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -47,6 +50,8 @@ public interface IClienteDAO {
     
     public boolean verificarCredenciales(String usuario, String contraseñaEncriptada) throws PersistenciaException;
     
-  
+    public String obtenerContraseñaEncriptada(String usuario) throws SQLException;
+
+     public Transferencia TransferirFeria(TransferenciaNuevaDTO transferencia) throws PersistenciaException;
 }
 

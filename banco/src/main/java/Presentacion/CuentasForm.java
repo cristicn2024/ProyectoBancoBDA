@@ -75,7 +75,7 @@ int idCliente;
         jScrollPane1 = new javax.swing.JScrollPane();
         Tabla = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        generarFolioBoton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -121,8 +121,13 @@ int idCliente;
             }
         });
 
-        jButton2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jButton2.setText("Generar Folio");
+        generarFolioBoton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        generarFolioBoton.setText("Generar Folio");
+        generarFolioBoton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                generarFolioBotonActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel1.setText("Cuentas");
@@ -137,7 +142,7 @@ int idCliente;
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(regresarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(199, 199, 199)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(generarFolioBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(57, 57, 57)
                         .addComponent(jButton1))
                     .addComponent(agregarCuentaBoton)
@@ -158,7 +163,7 @@ int idCliente;
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(regresarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(generarFolioBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(46, Short.MAX_VALUE))
         );
 
@@ -174,6 +179,9 @@ int idCliente;
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        TransferenciaForm transferencia = new TransferenciaForm();
+        transferencia.setVisible(true);
+        this.setVisible(false);     
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void regresarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regresarBotonActionPerformed
@@ -182,13 +190,20 @@ iniciarSesion.setVisible(true);
 this.setVisible(false);        // TODO add your handling code here:
     }//GEN-LAST:event_regresarBotonActionPerformed
 
+    private void generarFolioBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generarFolioBotonActionPerformed
+        // TODO add your handling code here:
+        GenerarFolioForm gff = new GenerarFolioForm();
+        gff.setVisible(true);
+        
+    }//GEN-LAST:event_generarFolioBotonActionPerformed
+
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Tabla;
     private javax.swing.JButton agregarCuentaBoton;
+    private javax.swing.JButton generarFolioBoton;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

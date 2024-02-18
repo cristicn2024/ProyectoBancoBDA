@@ -50,7 +50,6 @@ public class RetiroSinCuentaForm extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         aceptarBoton = new javax.swing.JButton();
         txtFolio = new javax.swing.JTextField();
         txtContraseña = new javax.swing.JTextField();
@@ -63,9 +62,6 @@ public class RetiroSinCuentaForm extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("Contraseña:");
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel3.setText("Fecha y Hora:");
 
         aceptarBoton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         aceptarBoton.setText("Aceptar");
@@ -85,23 +81,22 @@ public class RetiroSinCuentaForm extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(222, 222, 222)
-                        .addComponent(aceptarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(108, 108, 108)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(32, 32, 32)
                                 .addComponent(txtFolio, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtContraseña))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(45, 45, 45)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(168, 168, 168)
+                        .addComponent(aceptarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(124, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -117,11 +112,9 @@ public class RetiroSinCuentaForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtContraseña, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel3)
-                .addGap(61, 61, 61)
+                .addGap(35, 35, 35)
                 .addComponent(aceptarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(40, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
 
         pack();
@@ -129,32 +122,7 @@ public class RetiroSinCuentaForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void aceptarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarBotonActionPerformed
-        // TODO add your handling code here:
-    /*     String nombreUsuario = txtUsuario.getText(); // Obtener el nombre de usuario del campo de texto
-
-    try {
-        int idCliente = clienteDAO.obtenerIdClientePorUsuario(nombreUsuario);
-
-        RetiroNuevoDTO retiroDTO = new RetiroNuevoDTO();
-        retiroDTO.setMonto(Double.parseDouble(txtMonto.getText()));
-        retiroDTO.setFolio(contadorFolio++); // Usar el valor actual del contador como folio y luego incrementarlo en uno
-        retiroDTO.setContraseña(generarContraseñaAleatoria(8)); // Generar una contraseña aleatoria de 8 caracteres
-        retiroDTO.setIdCliente(idCliente); // Establecer el ID del cliente obtenido
-        retiroDTO.setCobrado("no cobrado");
-retiroDTO.setFechaHora(LocalDateTime.now());
-
-        Retiro retiroAgregado = clienteDAO.RetirarFeria(retiroDTO);
-
-        if (retiroAgregado != null) {
-            JOptionPane.showMessageDialog(this, "Retiro realizado con éxito.\nFolio: " + retiroDTO.getFolio() +
-                    "\nContraseña: " + retiroDTO.getContraseña()+"\nFecha  y hora: "+retiroDTO.getFechaHora() );
-        } else {
-            JOptionPane.showMessageDialog(this, "Error al realizar el retiro.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-     
-    } catch (PersistenciaException e) {
-        LOG.log(Level.SEVERE, "No se pudo realizar el retiro sin cuenta", e);
-    }*/
+    
     }//GEN-LAST:event_aceptarBotonActionPerformed
 
     
@@ -164,7 +132,6 @@ retiroDTO.setFechaHora(LocalDateTime.now());
     private javax.swing.JButton aceptarBoton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JTextField txtContraseña;
     private javax.swing.JTextField txtFolio;
