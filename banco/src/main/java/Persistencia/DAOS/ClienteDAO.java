@@ -5,15 +5,24 @@
 package Persistencia.DAOS;
 
 import Dominio.Cliente;
+import Dominio.Cuenta;
 import Dominio.Domicilio;
+import Dominio.Retiro;
 import Persistencia.Conexion.DTO.ClienteNuevoDTO;
+import Persistencia.Conexion.DTO.CuentaNuevaDTO;
 import Persistencia.Conexion.DTO.DomicilioNuevoDTO;
+import Persistencia.Conexion.DTO.RetiroNuevoDTO;
 import Persistencia.Conexion.IConexionBD;
 import Persistencia.Excepciones.PersistenciaException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,7 +45,7 @@ public class ClienteDAO implements IClienteDAO {
 
     @Override
     public Cliente agregarCliente(ClienteNuevoDTO cliente) throws PersistenciaException {
-String sentenciaSQL = "INSERT INTO CLIENTE (nombre, apellidoPaterno, apellidoMaterno, fechaNacimiento, usuario, contraseña) " +
+String sentenciaSQL = "INSERT INTO CLIENTES (nombre, apellidoPaterno, apellidoMaterno, fechaNacimiento, usuario, contraseña) " +
                       "VALUES (?, ?, ?, ?, ?, ?)";
         try {
             Connection conexion = this.conexionBD.crearConexion();
@@ -66,7 +75,7 @@ String sentenciaSQL = "INSERT INTO CLIENTE (nombre, apellidoPaterno, apellidoMat
 
     @Override
     public Domicilio agregarDomicilio(DomicilioNuevoDTO direccion) throws PersistenciaException {
-        String sentenciaSQL = "INSERT INTO DOMICILIO (calle, colonia, numero) VALUES (?, ?, ?)";
+        String sentenciaSQL = "INSERT INTO DOMICILIOS (calle, colonia, numero) VALUES (?, ?, ?)";
         try {
             Connection conexion = this.conexionBD.crearConexion();
             PreparedStatement comandoSQL = conexion.prepareStatement(sentenciaSQL, Statement.RETURN_GENERATED_KEYS);
@@ -89,4 +98,125 @@ String sentenciaSQL = "INSERT INTO CLIENTE (nombre, apellidoPaterno, apellidoMat
         }
     }
 
+    @Override
+    public Cuenta agregarCuenta(CuentaNuevaDTO cuenta) throws PersistenciaException {
+       String sentenciaSQL = "INSERT INTO cuentas (Saldo, estado, FechaApertura, IdCliente) "
+            + "VALUES (?, ?, ?, ?)";
+    try {
+        Connection conexion = this.conexionBD.crearConexion();
+        PreparedStatement comandoSQL = conexion.prepareStatement(sentenciaSQL, Statement.RETURN_GENERATED_KEYS);
+
+        comandoSQL.setDouble(1, cuenta.getSaldo());
+        comandoSQL.setString(2, cuenta.getEstado());
+        comandoSQL.setDate(3, cuenta.getFechaApertura());
+        comandoSQL.setInt(4, cuenta.getIdCliente());
+
+        int registrosModificados = comandoSQL.executeUpdate();
+        LOG.log(Level.INFO, "Se agregó con éxito {0} cuenta(s)", registrosModificados);
+
+        ResultSet registroGenerado = comandoSQL.getGeneratedKeys();
+        registroGenerado.next();
+
+        Cuenta cuentaNueva = new Cuenta(registroGenerado.getInt(1),  cuenta.getSaldo(), cuenta.getEstado(), cuenta.getFechaApertura(), cuenta.getIdCliente());
+
+        return cuentaNueva;
+    } catch (Exception e) {
+        LOG.log(Level.SEVERE, "No se pudo agregar la cuenta", e);
+        throw new PersistenciaException("No se pudo guardar la cuenta", e);
+    }
+    }
+
+    @Override
+    public List<Cuenta> mostrarCuentas(int id) throws PersistenciaException {
+  List<Cuenta> cuentas = new ArrayList<>(); // Lista para almacenar las cuentas encontradas
+
+    // Realizar la consulta
+    String consulta = "SELECT * FROM cuentas WHERE idCliente = (?)";
+
+    try (Connection conexion = this.conexionBD.crearConexion();
+         PreparedStatement comandoSQL = conexion.prepareStatement(consulta)) {
+
+        comandoSQL.setInt(1, id);
+        ResultSet resultado = comandoSQL.executeQuery();
+
+        // Iterar sobre todos los resultados y crear un objeto Cuenta para cada uno
+        while (resultado.next()) {
+            Cuenta cuentaConsultada = new Cuenta(
+                    resultado.getInt(1),
+                    resultado.getDouble(2),
+                    resultado.getString(3),
+                    resultado.getDate(4),
+                    resultado.getInt(5));
+
+            cuentas.add(cuentaConsultada); // Agregar la cuenta a la lista
+        }
+
+    } catch (Exception e) {
+        LOG.log(Level.SEVERE, "Error al buscar cuentas", e);
+        throw new PersistenciaException("Error al buscar cuentas", e);
+    }
+
+    return cuentas; 
+    }
+
+    @Override
+    public Retiro RetirarFeria(RetiroNuevoDTO retiro) throws PersistenciaException {
+ String sentenciaSQL = "INSERT INTO transaccionRetirosSinCuenta (FechaHora, monto, folio, contraseña, IdCliente, estado) "
+            + "VALUES (?, ?, ?, ?, ?, ?)";
+    try (Connection conexion = this.conexionBD.crearConexion();
+         PreparedStatement comandoSQL = conexion.prepareStatement(sentenciaSQL, Statement.RETURN_GENERATED_KEYS)) {
+
+        comandoSQL.setObject(1, LocalDateTime.now());
+        comandoSQL.setDouble(2, retiro.getMonto());
+        comandoSQL.setInt(3, retiro.getFolio());
+        comandoSQL.setString(4, retiro.getContraseña());
+        comandoSQL.setInt(5, retiro.getIdCliente());
+        comandoSQL.setString(6, retiro.getCobrado());
+
+        int registrosModificados = comandoSQL.executeUpdate();
+        LOG.log(Level.INFO, "Se agregó con éxito {0} retiro(s) sin cuenta", registrosModificados);
+
+        ResultSet registroGenerado = comandoSQL.getGeneratedKeys();
+        int idTransaccion;
+        if (registroGenerado.next()) {
+            idTransaccion = registroGenerado.getInt(1);
+            LOG.log(Level.INFO, "ID de la transacción generada: {0}", idTransaccion);
+        } else {
+            LOG.log(Level.WARNING, "No se pudo obtener el ID de la transacción generada");
+            throw new PersistenciaException("No se pudo obtener el ID de la transacción generada");
+        }
+
+        // Crear un objeto Retiro con la información obtenida
+        Retiro retiroGenerado = new Retiro(idTransaccion, LocalDateTime.now(), retiro.getMonto(), retiro.getFolio(), retiro.getContraseña(), retiro.getIdCliente(), retiro.getCobrado());
+        
+        return retiroGenerado;
+    } catch (Exception e) {
+        LOG.log(Level.SEVERE, "No se pudo agregar el retiro sin cuenta", e);
+        throw new PersistenciaException("No se pudo guardar el retiro sin cuenta", e);
+    }
+    }
+
+    @Override
+    public int obtenerIdClientePorUsuario(String nombreUsuario) throws PersistenciaException {
+ String CONSULTA_OBTENER_ID_POR_USUARIO = "SELECT IdCliente FROM clientes WHERE usuario = ?";
+   try (Connection conexion = this.conexionBD.crearConexion();
+         PreparedStatement comandoSQL = conexion.prepareStatement(CONSULTA_OBTENER_ID_POR_USUARIO)) {
+
+        comandoSQL.setString(1, nombreUsuario);
+
+        try (ResultSet resultado = comandoSQL.executeQuery()) {
+            if (resultado.next()) {
+                return resultado.getInt(1);
+            } else {
+                throw new PersistenciaException("No se encontró ningún cliente con el nombre de usuario proporcionado: " + nombreUsuario);
+            }
+        }
+    } catch (SQLException e) {
+        LOG.log(Level.SEVERE, "Error al obtener el ID del cliente por nombre de usuario", e);
+        throw new PersistenciaException("Error al obtener el ID del cliente por nombre de usuario", e);
+    }
+    
+    }
+
+  
 }

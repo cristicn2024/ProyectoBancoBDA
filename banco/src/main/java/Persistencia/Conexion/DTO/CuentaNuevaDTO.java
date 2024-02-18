@@ -2,46 +2,41 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Dominio;
+package Persistencia.Conexion.DTO;
+
 import java.sql.Date;
+
 /**
- * Clase POJO de la cuenta
- * @author INEGI
+ *
+ * @author crist
  */
-public class Cuenta {
-   private int noCuenta;
+public class CuentaNuevaDTO {
+    
+    private int noCuenta;
     private double saldo;
+    private String estado;
     private Date fechaApertura;
     private int idCliente;
-    private String estado;
 
-    public Cuenta() {
+    public CuentaNuevaDTO() {
     }
 
-    public Cuenta(int noCuenta, double saldo, String estado,Date fechaApertura, int idCliente) {
-        this.noCuenta = noCuenta;
+    public CuentaNuevaDTO( double saldo, String estado, Date fechaApertura, int idCliente) {
         this.saldo = saldo;
-        this.estado=estado;
+        this.estado = estado;
         this.fechaApertura = fechaApertura;
         this.idCliente = idCliente;
     }
 
-    
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public Cuenta(int noCuenta, double saldo, Date fechaApertura) {
+    public CuentaNuevaDTO(int noCuenta, double saldo, String estado, Date fechaApertura, int idCliente) {
         this.noCuenta = noCuenta;
-
         this.saldo = saldo;
+        this.estado = estado;
         this.fechaApertura = fechaApertura;
+        this.idCliente = idCliente;
     }
+
+  
 
     public int getNoCuenta() {
         return noCuenta;
@@ -57,6 +52,14 @@ public class Cuenta {
 
     public void setSaldo(double saldo) {
         this.saldo = saldo;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     public Date getFechaApertura() {
@@ -77,7 +80,7 @@ public class Cuenta {
 
     @Override
     public String toString() {
-        return "Cuenta{" + "noCuenta=" + noCuenta + ", saldo=" + saldo + ", fechaApertura=" + fechaApertura + ", idCliente=" + idCliente + ", estado=" + estado + '}';
+        return "CuentaNuevaDTO{" + "noCuenta=" + noCuenta + ", saldo=" + saldo + ", estado=" + estado + ", fechaApertura=" + fechaApertura + ", idCliente=" + idCliente + '}';
     }
-    
+
 }

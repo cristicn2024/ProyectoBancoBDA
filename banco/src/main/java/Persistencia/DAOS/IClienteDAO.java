@@ -5,10 +5,16 @@
 package Persistencia.DAOS;
 
 import Dominio.Cliente;
+import Dominio.Cuenta;
 import Dominio.Domicilio;
+import Dominio.Retiro;
 import Persistencia.Conexion.DTO.ClienteNuevoDTO;
+import Persistencia.Conexion.DTO.CuentaNuevaDTO;
 import Persistencia.Conexion.DTO.DomicilioNuevoDTO;
+import Persistencia.Conexion.DTO.RetiroNuevoDTO;
 import Persistencia.Excepciones.PersistenciaException;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 /**
  * Clase interfaz del DAO de Clientes
@@ -31,5 +37,14 @@ public interface IClienteDAO {
      * @throws PersistenciaException
      */
     public Domicilio agregarDomicilio(DomicilioNuevoDTO direccion) throws PersistenciaException;
-
+ public Cuenta agregarCuenta(CuentaNuevaDTO cuenta) throws PersistenciaException;
+    
+    public List<Cuenta> mostrarCuentas(int id) throws PersistenciaException;
+    
+    public Retiro RetirarFeria (RetiroNuevoDTO retiro) throws PersistenciaException;
+    
+    public int obtenerIdClientePorUsuario(String nombreUsuario) throws PersistenciaException;
+    
+  
 }
+
