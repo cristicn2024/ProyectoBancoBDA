@@ -162,41 +162,45 @@ public class ClienteDAO implements IClienteDAO {
         return cuentas;
     }
 
-    @Override
     public Retiro RetirarFeria(RetiroNuevoDTO retiro) throws PersistenciaException {
-        String sentenciaSQL = "INSERT INTO transaccionRetirosSinCuenta (FechaHora, monto, folio, contraseña, IdCliente, estado) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
-        try ( Connection conexion = this.conexionBD.crearConexion();  PreparedStatement comandoSQL = conexion.prepareStatement(sentenciaSQL, Statement.RETURN_GENERATED_KEYS)) {
+    String sentenciaSQL = "INSERT INTO transaccionRetirosSinCuenta (FechaHora, monto, folio, contraseña, IdCliente, estado) "
+            + "VALUES (?, ?, ?, ?, ?, 'no cobrado')";
+    try (Connection conexion = this.conexionBD.crearConexion(); 
+         PreparedStatement comandoSQL = conexion.prepareStatement(sentenciaSQL, Statement.RETURN_GENERATED_KEYS)) {
 
-            comandoSQL.setObject(1, LocalDateTime.now());
-            comandoSQL.setDouble(2, retiro.getMonto());
-            comandoSQL.setInt(3, retiro.getFolio());
-            comandoSQL.setString(4, retiro.getContraseña());
-            comandoSQL.setInt(5, retiro.getIdCliente());
-            comandoSQL.setString(6, retiro.getCobrado());
+        comandoSQL.setObject(1, LocalDateTime.now());
+        comandoSQL.setDouble(2, retiro.getMonto());
+        comandoSQL.setInt(3, -1); // El folio se calculará en el trigger, se puede enviar un valor cualquiera aquí
+        comandoSQL.setString(4, retiro.getContraseña());
+        comandoSQL.setInt(5, retiro.getIdCliente());
 
-            int registrosModificados = comandoSQL.executeUpdate();
-            LOG.log(Level.INFO, "Se agregó con éxito {0} retiro(s) sin cuenta", registrosModificados);
+        int registrosModificados = comandoSQL.executeUpdate();
+        LOG.log(Level.INFO, "Se agregó con éxito {0} retiro(s) sin cuenta", registrosModificados);
 
-            ResultSet registroGenerado = comandoSQL.getGeneratedKeys();
-            int idTransaccion;
-            if (registroGenerado.next()) {
-                idTransaccion = registroGenerado.getInt(1);
-                LOG.log(Level.INFO, "ID de la transacción generada: {0}", idTransaccion);
-            } else {
-                LOG.log(Level.WARNING, "No se pudo obtener el ID de la transacción generada");
-                throw new PersistenciaException("No se pudo obtener el ID de la transacción generada");
-            }
-
-            // Crear un objeto Retiro con la información obtenida
-            Retiro retiroGenerado = new Retiro(idTransaccion, LocalDateTime.now(), retiro.getMonto(), retiro.getFolio(), retiro.getContraseña(), retiro.getIdCliente(), retiro.getCobrado());
-
-            return retiroGenerado;
-        } catch (Exception e) {
-            LOG.log(Level.SEVERE, "No se pudo agregar el retiro sin cuenta", e);
-            throw new PersistenciaException("No se pudo guardar el retiro sin cuenta", e);
+        ResultSet registroGenerado = comandoSQL.getGeneratedKeys();
+        int idTransaccion;
+        int folioGenerado;
+        if (registroGenerado.next()) {
+            idTransaccion = registroGenerado.getInt(1);
+            folioGenerado = registroGenerado.getInt(1); // Obtener el valor del folio generado
+            LOG.log(Level.INFO, "ID de la transacción generada: {0}", idTransaccion);
+            LOG.log(Level.INFO, "Folio generado: {0}", folioGenerado);
+        } else {
+            LOG.log(Level.WARNING, "No se pudo obtener el ID de la transacción generada");
+            throw new PersistenciaException("No se pudo obtener el ID de la transacción generada");
         }
+
+        // Crear un objeto Retiro con la información obtenida
+        Retiro retiroGenerado = new Retiro(idTransaccion, LocalDateTime.now(), retiro.getMonto(), folioGenerado, retiro.getContraseña(), retiro.getIdCliente(), "no cobrado");
+
+        return retiroGenerado;
+    } catch (Exception e) {
+        LOG.log(Level.SEVERE, "No se pudo agregar el retiro sin cuenta", e);
+        throw new PersistenciaException("No se pudo guardar el retiro sin cuenta", e);
     }
+}
+
+
 
     @Override
     public int obtenerIdClientePorUsuario(String nombreUsuario) throws PersistenciaException {
@@ -239,11 +243,11 @@ public class ClienteDAO implements IClienteDAO {
 
     @Override
     public String obtenerContraseñaEncriptada(String usuario) throws SQLException {
-         String contraseñaEncriptada = null;
+        String contraseñaEncriptada = null;
 
-        try (Connection conexion = this.conexionBD.crearConexion(); PreparedStatement statement = conexion.prepareStatement("SELECT contraseña FROM Clientes WHERE usuario = ?")) {
+        try ( Connection conexion = this.conexionBD.crearConexion();  PreparedStatement statement = conexion.prepareStatement("SELECT contraseña FROM Clientes WHERE usuario = ?")) {
             statement.setString(1, usuario);
-            try (ResultSet resultSet = statement.executeQuery()) {
+            try ( ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     contraseñaEncriptada = resultSet.getString("contraseña");
                 }

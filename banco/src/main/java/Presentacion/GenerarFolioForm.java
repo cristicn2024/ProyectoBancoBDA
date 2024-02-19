@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
  */
 public class GenerarFolioForm extends javax.swing.JFrame {
 
-    private int contadorFolio = 1;
+    
 
     private static final Logger LOG = Logger.getLogger(ClienteDAO.class.getName());
     String cadenaConexion = "jdbc:mysql://localhost:3306/ProyectoBanco";
@@ -141,22 +141,22 @@ public class GenerarFolioForm extends javax.swing.JFrame {
 
             RetiroNuevoDTO retiroDTO = new RetiroNuevoDTO();
             retiroDTO.setMonto(Double.parseDouble(txtMonto.getText()));
-            retiroDTO.setFolio(contadorFolio++);
+            
+            // No es necesario establecer el folio aquí, se calculará automáticamente en el método RetirarFeria
             retiroDTO.setContraseña(generarContraseñaAleatoria(8));
             retiroDTO.setIdCliente(idCliente);
-            retiroDTO.setCobrado("no cobrado");
-            retiroDTO.setFechaHora(LocalDateTime.now());
+            retiroDTO.setCobrado("null");
+            // No es necesario establecer la fecha y hora aquí, se establecerá automáticamente en el método RetirarFeria
 
             Retiro retiroAgregado = clienteDAO.RetirarFeria(retiroDTO);
 
-            if (retiroAgregado != null) {
-                JOptionPane.showMessageDialog(this, "Folio generado con éxito.\nFolio: " + retiroDTO.getFolio()
-                        + "\nContraseña: " + retiroDTO.getContraseña() + "\nFecha  y hora: " + retiroDTO.getFechaHora());
-                this.setVisible(false);
-            } else {
-                JOptionPane.showMessageDialog(this, "Error al realizar el retiro.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-
+    if (retiroAgregado != null) {
+        JOptionPane.showMessageDialog(this, "Folio generado con éxito.\nFolio: " + retiroAgregado.getFolio()
+                + "\nContraseña: " + retiroAgregado.getContraseña() + "\nFecha  y hora: " + retiroAgregado.getFechaHora());
+        this.setVisible(false);
+    } else {
+        JOptionPane.showMessageDialog(this, "Error al realizar el retiro.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
         } catch (PersistenciaException e) {
             LOG.log(Level.SEVERE, "No se pudo realizar el retiro sin cuenta", e);
         }
