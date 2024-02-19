@@ -11,6 +11,7 @@ import Persistencia.DAOS.ClienteDAO;
 import Persistencia.DAOS.IClienteDAO;
 import Persistencia.Excepciones.PersistenciaException;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -77,6 +78,8 @@ int idCliente;
         jButton1 = new javax.swing.JButton();
         generarFolioBoton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        cancelarCuentaBoton = new javax.swing.JButton();
+        historialBotno = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -132,6 +135,22 @@ int idCliente;
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel1.setText("Cuentas");
 
+        cancelarCuentaBoton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        cancelarCuentaBoton.setText("Cancelar Cuenta");
+        cancelarCuentaBoton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarCuentaBotonActionPerformed(evt);
+            }
+        });
+
+        historialBotno.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        historialBotno.setText("Historial");
+        historialBotno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                historialBotnoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -141,11 +160,16 @@ int idCliente;
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(regresarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(199, 199, 199)
+                        .addGap(55, 55, 55)
+                        .addComponent(historialBotno, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(55, 55, 55)
                         .addComponent(generarFolioBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(57, 57, 57)
+                        .addGap(38, 38, 38)
                         .addComponent(jButton1))
-                    .addComponent(agregarCuentaBoton)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(cancelarCuentaBoton)
+                        .addGap(32, 32, 32)
+                        .addComponent(agregarCuentaBoton))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 584, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(44, Short.MAX_VALUE))
@@ -156,14 +180,17 @@ int idCliente;
                 .addGap(51, 51, 51)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(agregarCuentaBoton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(agregarCuentaBoton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cancelarCuentaBoton))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(41, 41, 41)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(regresarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(generarFolioBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(generarFolioBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(historialBotno, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(46, Short.MAX_VALUE))
         );
 
@@ -197,12 +224,44 @@ this.setVisible(false);        // TODO add your handling code here:
         
     }//GEN-LAST:event_generarFolioBotonActionPerformed
 
+    private void cancelarCuentaBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarCuentaBotonActionPerformed
+        // TODO add your handling code here:
+        String inputIdCuenta = JOptionPane.showInputDialog(this, "Ingrese el Numero de la cuenta que desea cancelar:", "Cancelar Cuenta", JOptionPane.QUESTION_MESSAGE);
+    
+    if (inputIdCuenta != null && !inputIdCuenta.isEmpty()) {
+        try {
+            int idCuenta = Integer.parseInt(inputIdCuenta);
+            int confirmacion = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea cancelar la cuenta con ID " + idCuenta + "?", "Confirmación", JOptionPane.YES_NO_OPTION);
+
+            if (confirmacion == JOptionPane.YES_OPTION) {
+                clienteDAO.cancelarCuenta(idCuenta);
+                ConsultaCuentas();
+                JOptionPane.showMessageDialog(this, "La cuenta con ID " + idCuenta + " ha sido cancelada exitosamente.", "Cuenta Cancelada", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El ID de cuenta ingresado no es válido. Por favor, ingrese un número entero.", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (PersistenciaException ex) {
+          Logger.getLogger(CuentasForm.class.getName()).log(Level.SEVERE, null, ex);
+      }
+    } else {
+        JOptionPane.showMessageDialog(this, "Debe ingresar el ID de la cuenta que desea cancelar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+    }
+    }//GEN-LAST:event_cancelarCuentaBotonActionPerformed
+
+    private void historialBotnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_historialBotnoActionPerformed
+        // TODO add your handling code here:
+        ConsultasForm consultas = new ConsultasForm(idCliente);
+    consultas.setVisible(true);
+    }//GEN-LAST:event_historialBotnoActionPerformed
+
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Tabla;
     private javax.swing.JButton agregarCuentaBoton;
+    private javax.swing.JButton cancelarCuentaBoton;
     private javax.swing.JButton generarFolioBoton;
+    private javax.swing.JButton historialBotno;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;

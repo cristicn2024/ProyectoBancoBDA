@@ -24,22 +24,21 @@ public class CrearCuentaForm extends javax.swing.JFrame {
 
     int idCliente;
     Cuenta cuenta;
-Cliente cliente;
- private static final Logger LOG = Logger.getLogger(ClienteDAO.class.getName());
+    Cliente cliente;
+    private static final Logger LOG = Logger.getLogger(ClienteDAO.class.getName());
     String cadenaConexion = "jdbc:mysql://localhost:3306/ProyectoBanco";
     String usuario = "root";
     String contra = "78357Cas";
     IClienteDAO clienteDAO;
-        IConexionBD conexionBD;
-        
-        
+    IConexionBD conexionBD;
+
     public CrearCuentaForm(int idCliente) {
-         this.idCliente = idCliente;
-    cuenta = new Cuenta();
-    cliente = new Cliente();
+        this.idCliente = idCliente;
+        cuenta = new Cuenta();
+        cliente = new Cliente();
         conexionBD = new ConexionBD(cadenaConexion, usuario, contra);
         clienteDAO = new ClienteDAO(conexionBD); // Inicializa clienteDAO aquí
-    initComponents();
+        initComponents();
     }
 
     /**
@@ -138,36 +137,35 @@ Cliente cliente;
     }// </editor-fold>//GEN-END:initComponents
 
     private void aceptarBotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarBotoActionPerformed
-        // TODO add your handling code here:
         CuentaNuevaDTO cueDTO = new CuentaNuevaDTO();
-        
-    cueDTO.setSaldo(Double.parseDouble(txtSaldo.getText()));
-    cueDTO.setEstado("activa");
-    Date fechaApertura = new Date(); 
-    cueDTO.setFechaApertura(new java.sql.Date(fechaApertura.getTime()));
-    cueDTO.setIdCliente(Integer.parseInt(txtIdCliente.getText()));
-    
-    try {
-        // Llamar al método agregarCuenta del DAO de cuentas
-        Cuenta cuentaAgregada = clienteDAO.agregarCuenta(cueDTO);
-        LOG.log(Level.INFO, cuentaAgregada.toString());
-        
-        // Mostrar el formulario CuentasForm y actualizar la tabla
-        CuentasForm cuentasForm = new CuentasForm(idCliente);
-        cuentasForm.setVisible(true);
-        cuentasForm.ConsultaCuentas(); // Llamar al método ConsultaCuentas para actualizar la tabla
-        
-        this.setVisible(false);
-    } catch (PersistenciaException e) {
-        LOG.log(Level.SEVERE, "No se pudo agregar la cuenta", e);
-    }
+
+        cueDTO.setSaldo(Double.parseDouble(txtSaldo.getText()));
+        cueDTO.setEstado("activa");
+        Date fechaApertura = new Date();
+        cueDTO.setFechaApertura(new java.sql.Date(fechaApertura.getTime()));
+        cueDTO.setIdCliente(Integer.parseInt(txtIdCliente.getText()));
+
+        try {
+            Cuenta cuentaAgregada = clienteDAO.agregarCuenta(cueDTO);
+            LOG.log(Level.INFO, cuentaAgregada.toString());
+
+            CuentasForm cuentasForm = new CuentasForm(idCliente);
+            cuentasForm.setVisible(true);
+            cuentasForm.ConsultaCuentas();
+
+            this.setVisible(false);
+        } catch (PersistenciaException e) {
+            LOG.log(Level.SEVERE, "No se pudo agregar la cuenta", e);
+        }
     }//GEN-LAST:event_aceptarBotoActionPerformed
 
     private void cancelarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarBotonActionPerformed
         // TODO add your handling code here:
-        CuentasForm cuenta = new CuentasForm(idCliente);
-        cuenta.setVisible(true);
+        CuentasForm cuentasForm = new CuentasForm(idCliente); // Pasar el IdCliente al constructor de CuentasForm
+        cuentasForm.setVisible(true);
         this.setVisible(false);
+        // Llamar al método ConsultaCuentas() después de mostrar la ventana CuentasForm
+        cuentasForm.ConsultaCuentas();
     }//GEN-LAST:event_cancelarBotonActionPerformed
 
    

@@ -12,6 +12,7 @@ import Persistencia.Conexion.DTO.DomicilioNuevoDTO;
 import Persistencia.Conexion.IConexionBD;
 import Persistencia.DAOS.ClienteDAO;
 import Persistencia.DAOS.IClienteDAO;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
@@ -255,18 +256,18 @@ this.dispose();
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUsuarioActionPerformed
 public String encriptarContraseña(String contraseña) throws NoSuchAlgorithmException{
-        try{
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
-            byte[] hash = md.digest(contraseña.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for(byte b : hash){
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        }catch(NoSuchAlgorithmException ex){
-          LOG.log(Level.SEVERE, "Error al encriptar la contraseña", ex); 
-          return null;
-        }    
+           try {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] hash = md.digest(contraseña.getBytes(StandardCharsets.UTF_8));
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hash) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    } catch (NoSuchAlgorithmException ex) {
+        LOG.log(Level.SEVERE, "Error al encriptar la contraseña", ex);
+        return null;
+    }
     }
     
     

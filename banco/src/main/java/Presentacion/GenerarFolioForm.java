@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
  */
 public class GenerarFolioForm extends javax.swing.JFrame {
 
-  private int contadorFolio = 1; 
+    private int contadorFolio = 1;
 
     private static final Logger LOG = Logger.getLogger(ClienteDAO.class.getName());
     String cadenaConexion = "jdbc:mysql://localhost:3306/ProyectoBanco";
@@ -32,11 +32,9 @@ public class GenerarFolioForm extends javax.swing.JFrame {
     IClienteDAO clienteDAO;
     IConexionBD conexionBD;
 
-    
     public GenerarFolioForm() {
         conexionBD = new ConexionBD(cadenaConexion, usuario, contra);
         clienteDAO = new ClienteDAO(conexionBD); // Inicializa clienteDAO aquí
-
         initComponents();
     }
 
@@ -55,6 +53,7 @@ public class GenerarFolioForm extends javax.swing.JFrame {
         aceptarBoton = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         txtUsuario = new javax.swing.JTextField();
+        cancelarBoton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -75,6 +74,14 @@ public class GenerarFolioForm extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setText("Usuario:");
 
+        cancelarBoton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        cancelarBoton.setText("Cancelar");
+        cancelarBoton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarBotonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -84,18 +91,21 @@ public class GenerarFolioForm extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(29, 29, 29)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(134, 134, 134)
-                        .addComponent(aceptarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(57, 57, 57)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtMonto)
-                            .addComponent(txtUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE))))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(53, 53, 53)
+                            .addComponent(cancelarBoton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                            .addComponent(aceptarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addGap(57, 57, 57)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(txtMonto)
+                                .addComponent(txtUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)))))
                 .addContainerGap(66, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -112,7 +122,9 @@ public class GenerarFolioForm extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(txtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(56, 56, 56)
-                .addComponent(aceptarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(aceptarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cancelarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(56, Short.MAX_VALUE))
         );
 
@@ -122,37 +134,43 @@ public class GenerarFolioForm extends javax.swing.JFrame {
 
     private void aceptarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarBotonActionPerformed
         // TODO add your handling code here:
-        // TODO add your handling code here:
-         String nombreUsuario = txtUsuario.getText(); // Obtener el nombre de usuario del campo de texto
+        String nombreUsuario = txtUsuario.getText();
 
-    try {
-        int idCliente = clienteDAO.obtenerIdClientePorUsuario(nombreUsuario);
+        try {
+            int idCliente = clienteDAO.obtenerIdClientePorUsuario(nombreUsuario);
 
-        RetiroNuevoDTO retiroDTO = new RetiroNuevoDTO();
-        retiroDTO.setMonto(Double.parseDouble(txtMonto.getText()));
-        retiroDTO.setFolio(contadorFolio++); // Usar el valor actual del contador como folio y luego incrementarlo en uno
-        retiroDTO.setContraseña(generarContraseñaAleatoria(8)); // Generar una contraseña aleatoria de 8 caracteres
-        retiroDTO.setIdCliente(idCliente); // Establecer el ID del cliente obtenido
-        retiroDTO.setCobrado("no cobrado");
-retiroDTO.setFechaHora(LocalDateTime.now());
+            RetiroNuevoDTO retiroDTO = new RetiroNuevoDTO();
+            retiroDTO.setMonto(Double.parseDouble(txtMonto.getText()));
+            retiroDTO.setFolio(contadorFolio++);
+            retiroDTO.setContraseña(generarContraseñaAleatoria(8));
+            retiroDTO.setIdCliente(idCliente);
+            retiroDTO.setCobrado("no cobrado");
+            retiroDTO.setFechaHora(LocalDateTime.now());
 
-        Retiro retiroAgregado = clienteDAO.RetirarFeria(retiroDTO);
+            Retiro retiroAgregado = clienteDAO.RetirarFeria(retiroDTO);
 
-        if (retiroAgregado != null) {
-            JOptionPane.showMessageDialog(this, "Folio generado con éxito.\nFolio: " + retiroDTO.getFolio() +
-                    "\nContraseña: " + retiroDTO.getContraseña()+"\nFecha  y hora: "+retiroDTO.getFechaHora() );
-        } else {
-            JOptionPane.showMessageDialog(this, "Error al realizar el retiro.", "Error", JOptionPane.ERROR_MESSAGE);
+            if (retiroAgregado != null) {
+                JOptionPane.showMessageDialog(this, "Folio generado con éxito.\nFolio: " + retiroDTO.getFolio()
+                        + "\nContraseña: " + retiroDTO.getContraseña() + "\nFecha  y hora: " + retiroDTO.getFechaHora());
+                this.setVisible(false);
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al realizar el retiro.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (PersistenciaException e) {
+            LOG.log(Level.SEVERE, "No se pudo realizar el retiro sin cuenta", e);
         }
-     
-    } catch (PersistenciaException e) {
-        LOG.log(Level.SEVERE, "No se pudo realizar el retiro sin cuenta", e);
-    }
     }//GEN-LAST:event_aceptarBotonActionPerformed
+
+    private void cancelarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarBotonActionPerformed
+        // TODO add your handling code here:
+        this.setVisible(false);
+    }//GEN-LAST:event_cancelarBotonActionPerformed
     
      
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aceptarBoton;
+    private javax.swing.JButton cancelarBoton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

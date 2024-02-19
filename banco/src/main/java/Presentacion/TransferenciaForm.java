@@ -97,6 +97,11 @@ public class TransferenciaForm extends javax.swing.JFrame {
 
         cancelarBoton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cancelarBoton.setText("Cancelar");
+        cancelarBoton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarBotonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -176,53 +181,49 @@ public class TransferenciaForm extends javax.swing.JFrame {
         // TODO add your handling code here:
         String nombreUsuario = txtUsuario.getText(); // Obtener el numero de cuenta del usuario del campo de texto
 
-    try {
-        int idCliente = clienteDAO.obtenerIdClientePorUsuario(nombreUsuario);
-
-        TransferenciaNuevaDTO transferenciaDTO = new TransferenciaNuevaDTO();
-        transferenciaDTO.setMonto(Double.parseDouble(txtMonto.getText()));
-        transferenciaDTO.setNoCuenta(Integer.parseInt(txtNodeCuenta.getText())); // Usar el valor actual del contador como folio y luego incrementarlo en uno
-        transferenciaDTO.setNoCuentaDestino(Integer.parseInt(txtNodeCuentaDestino.getText())); // Generar una contraseña aleatoria de 8 caracteres
-        transferenciaDTO.setIdCliente(idCliente); // Establecer el ID del cliente obtenido
-        transferenciaDTO.setFechaHora(LocalDateTime.now());
-
-        Transferencia transferenciaAgregada = clienteDAO.TransferirFeria(transferenciaDTO);
-        
-        //try catch para actualizar los saldos
         try {
-            // Obtener los saldos actuales de las cuentas de origen y destino
-            double saldoOrigen = clienteDAO.obtenerSaldoCuenta(transferenciaDTO.getNoCuenta());
-            double saldoDestino = clienteDAO.obtenerSaldoCuenta(transferenciaDTO.getNoCuentaDestino());
+            int idCliente = clienteDAO.obtenerIdClientePorUsuario(nombreUsuario);
 
-            // Restar el monto de la transferencia del saldo de la cuenta de origen
-            double nuevoSaldoOrigen = saldoOrigen - transferenciaDTO.getMonto();
+            TransferenciaNuevaDTO transferenciaDTO = new TransferenciaNuevaDTO();
+            transferenciaDTO.setMonto(Double.parseDouble(txtMonto.getText()));
+            transferenciaDTO.setNoCuenta(Integer.parseInt(txtNodeCuenta.getText()));
+            transferenciaDTO.setNoCuentaDestino(Integer.parseInt(txtNodeCuentaDestino.getText()));
+            transferenciaDTO.setIdCliente(idCliente);
+            transferenciaDTO.setFechaHora(LocalDateTime.now());
 
-            // Sumar el monto de la transferencia al saldo de la cuenta de destino
-            double nuevoSaldoDestino = saldoDestino + transferenciaDTO.getMonto();
+            Transferencia transferenciaAgregada = clienteDAO.TransferirFeria(transferenciaDTO);
 
-            // Actualizar los saldos en la base de datos
-            clienteDAO.actualizarSaldoCuenta(transferenciaDTO.getNoCuenta(), nuevoSaldoOrigen);
-            clienteDAO.actualizarSaldoCuenta(transferenciaDTO.getNoCuentaDestino(), nuevoSaldoDestino);
+            try {
+                double saldoOrigen = clienteDAO.obtenerSaldoCuenta(transferenciaDTO.getNoCuenta());
+                double saldoDestino = clienteDAO.obtenerSaldoCuenta(transferenciaDTO.getNoCuentaDestino());
 
-            // Si todo se realiza correctamente, mostrar un mensaje de éxito
-            JOptionPane.showMessageDialog(null, "Transferencia generada con éxito");
+                double nuevoSaldoOrigen = saldoOrigen - transferenciaDTO.getMonto();
 
-        } catch (PersistenciaException ex) {
-            LOG.log(Level.SEVERE, "No se pudo realizar la transferencia", ex);
-            JOptionPane.showMessageDialog(null, "Error al realizar la transferencia.", "Error", JOptionPane.ERROR_MESSAGE);
+                double nuevoSaldoDestino = saldoDestino + transferenciaDTO.getMonto();
+
+                clienteDAO.actualizarSaldoCuenta(transferenciaDTO.getNoCuenta(), nuevoSaldoOrigen);
+                clienteDAO.actualizarSaldoCuenta(transferenciaDTO.getNoCuentaDestino(), nuevoSaldoDestino);
+
+                JOptionPane.showMessageDialog(null, "Transferencia generada con éxito");
+                CuentasForm cuentasForm = new CuentasForm(idCliente);
+                cuentasForm.ConsultaCuentas();
+                cuentasForm.setVisible(true);
+
+                this.dispose();
+            } catch (PersistenciaException ex) {
+                LOG.log(Level.SEVERE, "No se pudo realizar la transferencia", ex);
+                JOptionPane.showMessageDialog(null, "Error al realizar la transferencia.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+            if (transferenciaAgregada != null) {
+                JOptionPane.showMessageDialog(this, "Transferencia generada con éxito");
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al realizar la transferencia.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (PersistenciaException e) {
+            LOG.log(Level.SEVERE, "No se pudo realizar la transferencia", e);
         }
-
-        if (transferenciaAgregada != null) {
-            JOptionPane.showMessageDialog(this, "Transferencia generada con éxito");
-        } else {
-            JOptionPane.showMessageDialog(this, "Error al realizar la transferencia.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-
-    } catch (PersistenciaException e) {
-        LOG.log(Level.SEVERE, "No se pudo realizar la transferencia", e);
-    }
-
-
     }//GEN-LAST:event_aceptarBotonActionPerformed
 
     private void txtNodeCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNodeCuentaActionPerformed
@@ -232,6 +233,11 @@ public class TransferenciaForm extends javax.swing.JFrame {
     private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUsuarioActionPerformed
+
+    private void cancelarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarBotonActionPerformed
+        // TODO add your handling code here:
+        this.setVisible(false);
+    }//GEN-LAST:event_cancelarBotonActionPerformed
 
     
 

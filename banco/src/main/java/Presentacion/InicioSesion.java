@@ -9,6 +9,8 @@ import Persistencia.Conexion.IConexionBD;
 import Persistencia.Controlador.Utilerias.Sesion;
 import Persistencia.DAOS.ClienteDAO;
 import Persistencia.DAOS.IClienteDAO;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,16 +26,16 @@ import javax.swing.JOptionPane;
  */
 public class InicioSesion extends javax.swing.JFrame {
 
-      IConexionBD conexionBD;
-int idCliente;
-private IClienteDAO clienteDAO;
+    IConexionBD conexionBD;
+    int idCliente;
+    private IClienteDAO clienteDAO;
     private static final Logger LOG = Logger.getLogger(ClienteDAO.class.getName());
-  
+
     /**
      * Creates new form InicioSesion
      */
     public InicioSesion() {
-        
+
         String cadenaConexion = "jdbc:mysql://localhost:3306/ProyectoBanco";
         String usuario = "root";
         String contra = "78357Cas";
@@ -72,14 +74,14 @@ private IClienteDAO clienteDAO;
                 txtUsuarioActionPerformed(evt);
             }
         });
-        getContentPane().add(txtUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 180, 310, 40));
+        getContentPane().add(txtUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 120, 310, 40));
 
         txtContraseña.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtContraseñaActionPerformed(evt);
             }
         });
-        getContentPane().add(txtContraseña, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 110, 310, 40));
+        getContentPane().add(txtContraseña, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 180, 310, 40));
 
         btnRegistrarse.setText("Registrarse");
         btnRegistrarse.addActionListener(new java.awt.event.ActionListener() {
@@ -128,37 +130,36 @@ private IClienteDAO clienteDAO;
     }//GEN-LAST:event_txtContraseñaActionPerformed
 
     private void aceptarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarBotonActionPerformed
-       String usuario = txtUsuario.getText();
-    String contraseña = txtContraseña.getText();
-   /* ClienteForm clientes = new ClienteForm(null, true);
-    
-    
+        String usuario = txtUsuario.getText().trim();
+        String contraseña = txtContraseña.getText().trim();
+
         try {
-            // Obtener la contraseña encriptada de la base de datos
+            String contraseñaEncriptada = encriptarContraseña(contraseña);
+
+            System.out.println("Contraseña ingresada: " + contraseña);
+            System.out.println("Contraseña encriptada: " + contraseñaEncriptada);
+
             String contraseñaEncriptadaDB = clienteDAO.obtenerContraseñaEncriptada(usuario);
             System.out.println("Contraseña encriptada de la base de datos: " + contraseñaEncriptadaDB);
 
-
-// Verificar las credenciales
-            if (contraseñaEncriptadaDB != null && contraseñaEncriptadaDB.equals(contraseña)) {
+            if (contraseñaEncriptadaDB != null && contraseñaEncriptadaDB.equals(contraseñaEncriptada)) {
                 System.out.println("Contraseñas encriptadas coinciden. Iniciando sesión...");
-                // Código para abrir el siguiente formulario
-                CuentasForm cuentas = new CuentasForm(idCliente);
-                cuentas.setVisible(true);
-                this.dispose();
+
+                int idCliente = clienteDAO.obtenerIdClientePorUsuario(usuario);
+                System.out.println("ID del cliente: " + idCliente);
+
+                CuentasForm cuentasForm = new CuentasForm(idCliente);
+                cuentasForm.setVisible(true);
+                this.setVisible(false);
+                cuentasForm.ConsultaCuentas();
             } else {
                 System.out.println("Contraseñas encriptadas no coinciden. Usuario o contraseña incorrectos.");
                 JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos");
             }
-    } catch (Exception ex) {
-        LOG.log(Level.SEVERE, "Error al verificar las credenciales", ex);
-        JOptionPane.showMessageDialog(this, "Error al verificar las credenciales");
-    }*/
-     Sesion sesion = new Sesion();
-     sesion.setUsuario(usuario);
-     CuentasForm cuentas = new CuentasForm(idCliente);
-                cuentas.setVisible(true);
-                this.dispose();
+        } catch (Exception ex) {
+            LOG.log(Level.SEVERE, "Error al verificar las credenciales", ex);
+            JOptionPane.showMessageDialog(this, "Error al verificar las credenciales");
+        }
     }//GEN-LAST:event_aceptarBotonActionPerformed
 
     private void btnRetiroSinCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRetiroSinCuentaActionPerformed
@@ -166,7 +167,20 @@ private IClienteDAO clienteDAO;
         RetiroSinCuentaForm rscf = new RetiroSinCuentaForm();
         rscf.setVisible(true);
     }//GEN-LAST:event_btnRetiroSinCuentaActionPerformed
-
+public String encriptarContraseña(String contraseña) throws NoSuchAlgorithmException{
+           try {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] hash = md.digest(contraseña.getBytes(StandardCharsets.UTF_8));
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hash) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    } catch (NoSuchAlgorithmException ex) {
+        LOG.log(Level.SEVERE, "Error al encriptar la contraseña", ex);
+        return null;
+    }
+    }
    
 
     /**
