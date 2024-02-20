@@ -197,7 +197,7 @@ public class ClienteForm extends javax.swing.JDialog {
         return; // Detener la ejecución del método si algún campo está vacío
     }
 
-    String fechaTexto = txtFechaNacimiento.getText();
+  /*  String fechaTexto = txtFechaNacimiento.getText();
     DateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
     Date fechaNacimiento;
     try {
@@ -231,7 +231,19 @@ if (edad < 18) {
         JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
         return; // Detener la ejecución del método si algún campo está vacío
     }
+*/
+          String fechaTexto = txtFechaNacimiento.getText();
+    DateFormat formatoFecha = new SimpleDateFormat("dd-MM-yyyy");
+    Date fechaNacimiento;
+    try {
+        fechaNacimiento = new Date(formatoFecha.parse(fechaTexto).getTime());
+    } catch (ParseException ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Formato de fecha incorrecto.", "Error", JOptionPane.ERROR_MESSAGE);
+        return; // Detener la ejecución si la fecha de nacimiento no es válida
+    }
 
+    System.out.println("Fecha de nacimiento ingresada: " + fechaTexto);
         
         cliente.setNombre(txtNombre.getText());
         cliente.setApellidoMaterno(txtApellidoM.getText());
