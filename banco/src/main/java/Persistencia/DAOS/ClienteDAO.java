@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 
 /**
  * Clase DAO del cliente que implementa la interfaz IClienteDAO
+ *
  * @author INEGI
  */
 public class ClienteDAO implements IClienteDAO {
@@ -163,44 +164,43 @@ public class ClienteDAO implements IClienteDAO {
     }
 
     public Retiro RetirarFeria(RetiroNuevoDTO retiro) throws PersistenciaException {
-    String sentenciaSQL = "INSERT INTO transaccionRetirosSinCuenta (FechaHora, monto, folio, contraseña, noCuenta, estado) "
-            + "VALUES (?, ?, ?, ?, ?, 'no cobrado')";
-    try (Connection conexion = this.conexionBD.crearConexion(); 
-         PreparedStatement comandoSQL = conexion.prepareStatement(sentenciaSQL, Statement.RETURN_GENERATED_KEYS)) {
+        String sentenciaSQL = "INSERT INTO transaccionRetirosSinCuenta (FechaHora, monto, folio, contraseña, noCuenta, estado) "
+                + "VALUES (?, ?, ?, ?, ?, 'no cobrado')";
+        try ( Connection conexion = this.conexionBD.crearConexion();  PreparedStatement comandoSQL = conexion.prepareStatement(sentenciaSQL, Statement.RETURN_GENERATED_KEYS)) {
 
-        comandoSQL.setObject(1, LocalDateTime.now());
-        comandoSQL.setDouble(2, retiro.getMonto());
-        comandoSQL.setInt(3, 0); // El folio se calculará en el trigger, se puede enviar un valor cualquiera aquí
-        comandoSQL.setString(4, retiro.getContraseña());
-        comandoSQL.setInt(5, retiro.getIdCuenta());
+            comandoSQL.setObject(1, LocalDateTime.now());
+            comandoSQL.setDouble(2, retiro.getMonto());
+            comandoSQL.setInt(3, 0); // El folio se calculará en el trigger, se puede enviar un valor cualquiera aquí
+            comandoSQL.setString(4, retiro.getContraseña());
+            comandoSQL.setInt(5, retiro.getIdCuenta());
 
-        int registrosModificados = comandoSQL.executeUpdate();
-        LOG.log(Level.INFO, "Se agregó con éxito {0} retiro(s) sin cuenta", registrosModificados);
+            int registrosModificados = comandoSQL.executeUpdate();
+            LOG.log(Level.INFO, "Se agregó con éxito {0} retiro(s) sin cuenta", registrosModificados);
 
-        ResultSet registroGenerado = comandoSQL.getGeneratedKeys();
-        int idTransaccion;
-        int folioGenerado;
-        if (registroGenerado.next()) {
-            idTransaccion = registroGenerado.getInt(1);
-            folioGenerado = registroGenerado.getInt(1); // Obtener el valor del folio generado
-            LOG.log(Level.INFO, "ID de la transacción generada: {0}", idTransaccion);
-            LOG.log(Level.INFO, "Folio generado: {0}", folioGenerado);
-        } else {
-            LOG.log(Level.WARNING, "No se pudo obtener el ID de la transacción generada");
-            throw new PersistenciaException("No se pudo obtener el ID de la transacción generada");
+            ResultSet registroGenerado = comandoSQL.getGeneratedKeys();
+            int idTransaccion;
+            int folioGenerado;
+            if (registroGenerado.next()) {
+                idTransaccion = registroGenerado.getInt(1);
+                folioGenerado = registroGenerado.getInt(1); // Obtener el valor del folio generado
+                LOG.log(Level.INFO, "ID de la transacción generada: {0}", idTransaccion);
+                LOG.log(Level.INFO, "Folio generado: {0}", folioGenerado);
+            } else {
+                LOG.log(Level.WARNING, "No se pudo obtener el ID de la transacción generada");
+                throw new PersistenciaException("No se pudo obtener el ID de la transacción generada");
+            }
+
+            // Crear un objeto Retiro con la información obtenida
+            Retiro retiroGenerado = new Retiro(idTransaccion, LocalDateTime.now(), retiro.getMonto(), folioGenerado, retiro.getContraseña(), retiro.getIdCuenta(), "no cobrado");
+
+            return retiroGenerado;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo agregar el retiro sin cuenta", e);
+            throw new PersistenciaException("No se pudo guardar el retiro sin cuenta", e);
         }
-
-        // Crear un objeto Retiro con la información obtenida
-        Retiro retiroGenerado = new Retiro(idTransaccion, LocalDateTime.now(), retiro.getMonto(), folioGenerado, retiro.getContraseña(), retiro.getIdCuenta(), "no cobrado");
-
-        return retiroGenerado;
-    } catch (Exception e) {
-        LOG.log(Level.SEVERE, "No se pudo agregar el retiro sin cuenta", e);
-        throw new PersistenciaException("No se pudo guardar el retiro sin cuenta", e);
     }
-}
 
-@Override
+    @Override
     public int obtenerIdCuentaPorNoCuenta(String noCuenta) throws PersistenciaException {
         String CONSULTA_OBTENER_ID_POR_CUENTA = "SELECT idCliente FROM cuentas WHERE idCuenta = ?";
         try ( Connection conexion = this.conexionBD.crearConexion();  PreparedStatement comandoSQL = conexion.prepareStatement(CONSULTA_OBTENER_ID_POR_CUENTA)) {
@@ -219,7 +219,6 @@ public class ClienteDAO implements IClienteDAO {
             throw new PersistenciaException("Error al obtener el ID del cliente numero de cuenta", e);
         }
     }
-
 
     @Override
     public int obtenerIdClientePorUsuario(String nombreUsuario) throws PersistenciaException {
@@ -280,66 +279,85 @@ public class ClienteDAO implements IClienteDAO {
     }
 
     @Override
-    public Transferencia TransferirFeria(TransferenciaNuevaDTO transferencia) throws PersistenciaException {
-        String sentenciaSQL = "INSERT INTO transaccionTransferencias (FechaHora, monto, noCuentaDestino, IdCliente, noCuenta) "
-                + "VALUES (?, ?, ?, ?, ?)";
-        try ( Connection conexion = this.conexionBD.crearConexion();  PreparedStatement comandoSQL = conexion.prepareStatement(sentenciaSQL, Statement.RETURN_GENERATED_KEYS)) {
+public Transferencia TransferirFeria(TransferenciaNuevaDTO transferencia) throws PersistenciaException {
+    try (Connection conexion = this.conexionBD.crearConexion()) {
+        conexion.setAutoCommit(false);
 
-            comandoSQL.setObject(1, LocalDateTime.now());
-            comandoSQL.setDouble(2, transferencia.getMonto());
-            comandoSQL.setInt(3, transferencia.getNoCuentaDestino());
-            comandoSQL.setInt(4, transferencia.getIdCliente());
-            comandoSQL.setInt(5, transferencia.getNoCuenta());
+        // Actualizar saldo de cuenta origen
+        String sqlUpdateOrigen = "UPDATE cuentas SET Saldo = Saldo - ? WHERE IdCliente = ? AND idCuenta = ? AND Saldo >= ?";
+        try (PreparedStatement comandoUpdateOrigen = conexion.prepareStatement(sqlUpdateOrigen)) {
+            comandoUpdateOrigen.setDouble(1, transferencia.getMonto());
+            comandoUpdateOrigen.setInt(2, transferencia.getIdCliente());
+            comandoUpdateOrigen.setInt(3, transferencia.getNoCuenta());
+            comandoUpdateOrigen.setDouble(4, transferencia.getMonto());
+            int registrosModificados = comandoUpdateOrigen.executeUpdate();
+            if (registrosModificados != 1) {
+                conexion.rollback();
+                throw new PersistenciaException("No se pudo actualizar el saldo de la cuenta origen");
+            }
+        }
 
-            int registrosModificados = comandoSQL.executeUpdate();
-            LOG.log(Level.INFO, "Se agregó con éxito {0} transferencia(s) ", registrosModificados);
+        // Actualizar saldo de cuenta destino
+        String sqlUpdateDestino = "UPDATE cuentas SET Saldo = Saldo + ? WHERE idCuenta = ?";
+        try (PreparedStatement comandoUpdateDestino = conexion.prepareStatement(sqlUpdateDestino)) {
+            comandoUpdateDestino.setDouble(1, transferencia.getMonto());
+            comandoUpdateDestino.setInt(2, transferencia.getNoCuentaDestino());
+            int registrosModificados = comandoUpdateDestino.executeUpdate();
+            if (registrosModificados != 1) {
+                conexion.rollback();
+                throw new PersistenciaException("No se pudo actualizar el saldo de la cuenta destino");
+            }
+        }
 
-            ResultSet registroGenerado = comandoSQL.getGeneratedKeys();
-            int idTransaccion;
-            if (registroGenerado.next()) {
-                idTransaccion = registroGenerado.getInt(1);
-                LOG.log(Level.INFO, "ID de la transacción generada: {0}", idTransaccion);
+        // Insertar transacción
+        String sqlInsertTransaccion = "INSERT INTO transaccionTransferencias (FechaHora, monto, noCuentaDestino, IdCliente, noCuenta) VALUES (NOW(), ?, ?, ?, ?)";
+        try (PreparedStatement comandoInsertTransaccion = conexion.prepareStatement(sqlInsertTransaccion, Statement.RETURN_GENERATED_KEYS)) {
+            comandoInsertTransaccion.setDouble(1, transferencia.getMonto());
+            comandoInsertTransaccion.setInt(2, transferencia.getNoCuentaDestino());
+            comandoInsertTransaccion.setInt(3, transferencia.getIdCliente());
+            comandoInsertTransaccion.setInt(4, transferencia.getNoCuenta());
+            int registrosModificados = comandoInsertTransaccion.executeUpdate();
+            if (registrosModificados != 1) {
+                conexion.rollback();
+                throw new PersistenciaException("No se pudo insertar la transacción");
+            }
+
+            ResultSet generatedKeys = comandoInsertTransaccion.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                int idTransaccion = generatedKeys.getInt(1);
+                conexion.commit();
+                return new Transferencia(idTransaccion, LocalDateTime.now(), transferencia.getMonto(), transferencia.getNoCuentaDestino(), transferencia.getIdCliente(), transferencia.getNoCuenta());
             } else {
-                LOG.log(Level.WARNING, "No se pudo obtener el ID de la transacción generada");
+                conexion.rollback();
                 throw new PersistenciaException("No se pudo obtener el ID de la transacción generada");
             }
-
-            Transferencia transferenciaGenerada = new Transferencia(idTransaccion, LocalDateTime.now(), transferencia.getMonto(), transferencia.getNoCuentaDestino(), transferencia.getIdCliente(), transferencia.getNoCuenta());
-
-            return transferenciaGenerada;
-        } catch (Exception e) {
-            LOG.log(Level.SEVERE, "No se pudo agregar la transferencia", e);
-            throw new PersistenciaException("No se pudo guardar la transferenia", e);
         }
+    } catch (SQLException e) {
+        LOG.log(Level.SEVERE, "Error al transferir fondos", e);
+        throw new PersistenciaException("Error al transferir fondos", e);
     }
+}
 
-    @Override
-    public double obtenerSaldoCuenta(int noCuenta) throws PersistenciaException {
-        try ( Connection connection = this.conexionBD.crearConexion();  PreparedStatement statement = connection.prepareStatement("SELECT saldo FROM cuentas WHERE idCuenta = ?")) {
-            statement.setInt(1, noCuenta);
-            try ( ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getDouble("saldo");
+
+
+    public boolean saldoSuficienteParaTransferencia(int idCliente, int noCuenta, double monto) throws PersistenciaException {
+        String sentenciaSQL = "SELECT Saldo FROM cuentas WHERE IdCliente = ? AND idCuenta = ?";
+        try ( Connection conexion = this.conexionBD.crearConexion();  PreparedStatement comandoSQL = conexion.prepareStatement(sentenciaSQL)) {
+
+            comandoSQL.setInt(1, idCliente);
+            comandoSQL.setInt(2, noCuenta);
+
+            try ( ResultSet resultado = comandoSQL.executeQuery()) {
+                if (resultado.next()) {
+                    double saldo = resultado.getDouble("Saldo");
+                    return saldo >= monto;
                 } else {
-                    throw new PersistenciaException("No se encontró la cuenta con el número especificado");
+                    throw new PersistenciaException("No se encontró la cuenta del cliente");
                 }
             }
-        } catch (SQLException e) {
-            throw new PersistenciaException("Error al obtener el saldo de la cuenta", e);
-        }
-    }
 
-    @Override
-    public void actualizarSaldoCuenta(int noCuenta, double nuevoSaldo) throws PersistenciaException {
-        try ( Connection connection = this.conexionBD.crearConexion();  PreparedStatement statement = connection.prepareStatement("UPDATE cuentas SET saldo = ? WHERE idCuenta = ?")) {
-            statement.setDouble(1, nuevoSaldo);
-            statement.setInt(2, noCuenta);
-            int rowsAffected = statement.executeUpdate();
-            if (rowsAffected != 1) {
-                throw new PersistenciaException("No se pudo actualizar el saldo de la cuenta");
-            }
         } catch (SQLException e) {
-            throw new PersistenciaException("Error al actualizar el saldo de la cuenta", e);
+            throw new PersistenciaException("Error al verificar el saldo para la transferencia", e);
         }
     }
 
@@ -494,24 +512,23 @@ public class ClienteDAO implements IClienteDAO {
         }
 
     }
-    
+
     public void realizarDeposito(int idCuenta, int idCuentaDestino, double montoDeposito) {
-    String sql = "CALL RealizarDepositoSinRegistro(?, ?, ?);";
-    
-    try (Connection connection = this.conexionBD.crearConexion();
-         PreparedStatement statement = connection.prepareStatement(sql)) {
-         
-        statement.setInt(1, idCuenta);
-        statement.setInt(2, idCuentaDestino);
-        statement.setDouble(3, montoDeposito);
-        
-        
-        statement.executeUpdate();
-        System.out.println("Depósito realizado con éxito.");
-        
-    } catch (SQLException e) {
-        System.out.println("Error al realizar el depósito: " + e.getMessage());
+        String sql = "CALL RealizarDepositoSinRegistro(?, ?, ?);";
+
+        try ( Connection connection = this.conexionBD.crearConexion();  PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, idCuenta);
+            statement.setInt(2, idCuentaDestino);
+            statement.setDouble(3, montoDeposito);
+
+            statement.executeUpdate();
+            System.out.println("Depósito realizado con éxito.");
+
+        } catch (SQLException e) {
+            System.out.println("Error al realizar el depósito: " + e.getMessage());
+        }
+
     }
-}
 
 }

@@ -179,52 +179,43 @@ public class TransferenciaForm extends javax.swing.JFrame {
 
     private void aceptarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarBotonActionPerformed
         // TODO add your handling code here:
-        String nombreUsuario = txtUsuario.getText(); // Obtener el numero de cuenta del usuario del campo de texto
+         String nombreUsuario = txtUsuario.getText(); 
 
-        try {
-            int idCliente = clienteDAO.obtenerIdClientePorUsuario(nombreUsuario);
+    try {
+        int idCliente = clienteDAO.obtenerIdClientePorUsuario(nombreUsuario);
 
-            TransferenciaNuevaDTO transferenciaDTO = new TransferenciaNuevaDTO();
-            transferenciaDTO.setMonto(Double.parseDouble(txtMonto.getText()));
-            transferenciaDTO.setNoCuenta(Integer.parseInt(txtNodeCuenta.getText()));
-            transferenciaDTO.setNoCuentaDestino(Integer.parseInt(txtNodeCuentaDestino.getText()));
-            transferenciaDTO.setIdCliente(idCliente);
-            transferenciaDTO.setFechaHora(LocalDateTime.now());
+        TransferenciaNuevaDTO transferenciaDTO = new TransferenciaNuevaDTO();
+        transferenciaDTO.setMonto(Double.parseDouble(txtMonto.getText()));
+        transferenciaDTO.setNoCuenta(Integer.parseInt(txtNodeCuenta.getText()));
+        transferenciaDTO.setNoCuentaDestino(Integer.parseInt(txtNodeCuentaDestino.getText()));
+        transferenciaDTO.setIdCliente(idCliente);
+         Transferencia transferenciaAgregada = clienteDAO.TransferirFeria(transferenciaDTO);
+          JOptionPane.showMessageDialog(this, "Transferencia generada con éxito");
+                CuentasForm c = new CuentasForm(idCliente);
+                c.setVisible(true);
+                this.setVisible(false);
 
+       /* // Verificar si el saldo es suficiente para la transferencia
+        if (clienteDAO.saldoSuficienteParaTransferencia(idCliente, transferenciaDTO.getNoCuenta(), transferenciaDTO.getMonto())) {
             Transferencia transferenciaAgregada = clienteDAO.TransferirFeria(transferenciaDTO);
-
-            try {
-                double saldoOrigen = clienteDAO.obtenerSaldoCuenta(transferenciaDTO.getNoCuenta());
-                double saldoDestino = clienteDAO.obtenerSaldoCuenta(transferenciaDTO.getNoCuentaDestino());
-
-                double nuevoSaldoOrigen = saldoOrigen - transferenciaDTO.getMonto();
-
-                double nuevoSaldoDestino = saldoDestino + transferenciaDTO.getMonto();
-
-                clienteDAO.actualizarSaldoCuenta(transferenciaDTO.getNoCuenta(), nuevoSaldoOrigen);
-                clienteDAO.actualizarSaldoCuenta(transferenciaDTO.getNoCuentaDestino(), nuevoSaldoDestino);
-
-                JOptionPane.showMessageDialog(null, "Transferencia generada con éxito");
-                CuentasForm cuentasForm = new CuentasForm(idCliente);
-                cuentasForm.ConsultaCuentas();
-                cuentasForm.setVisible(true);
-
-                this.dispose();
-            } catch (PersistenciaException ex) {
-                LOG.log(Level.SEVERE, "No se pudo realizar la transferencia", ex);
-                JOptionPane.showMessageDialog(null, "Error al realizar la transferencia.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
 
             if (transferenciaAgregada != null) {
                 JOptionPane.showMessageDialog(this, "Transferencia generada con éxito");
+                CuentasForm c = new CuentasForm(idCliente);
+                c.setVisible(true);
+                this.setVisible(false);
             } else {
                 JOptionPane.showMessageDialog(this, "Error al realizar la transferencia.", "Error", JOptionPane.ERROR_MESSAGE);
             }
+        } else {
+            JOptionPane.showMessageDialog(this, "Saldo insuficiente para realizar la transferencia.", "Error", JOptionPane.ERROR_MESSAGE);
+        }*/
 
-        } catch (PersistenciaException e) {
-            LOG.log(Level.SEVERE, "No se pudo realizar la transferencia", e);
-        }
+    } catch (PersistenciaException e) {
+        LOG.log(Level.SEVERE, "No se pudo realizar la transferencia", e);
+    }
     }//GEN-LAST:event_aceptarBotonActionPerformed
+
 
     private void txtNodeCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNodeCuentaActionPerformed
         // TODO add your handling code here:

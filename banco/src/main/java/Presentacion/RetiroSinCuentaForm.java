@@ -44,7 +44,7 @@ public class RetiroSinCuentaForm extends javax.swing.JFrame {
 
         initComponents();
 
-        tiempoRestanteEnSegundos = 300;
+        tiempoRestanteEnSegundos = 600;
 
         temporizador = new Timer(1000, new ActionListener() {
             @Override
@@ -102,6 +102,12 @@ public class RetiroSinCuentaForm extends javax.swing.JFrame {
         aceptarBoton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 aceptarBotonActionPerformed(evt);
+            }
+        });
+
+        txtFolio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtFolioActionPerformed(evt);
             }
         });
 
@@ -182,6 +188,7 @@ public class RetiroSinCuentaForm extends javax.swing.JFrame {
         try {
 
             clienteDAO.actualizarEstadoTransaccionesRetirosSinCuenta(folioGenerado, contraseñaGenerada, "cobrado");
+            
             JOptionPane.showMessageDialog(this, "retiro extoso");
             this.setVisible(false);
         } catch (PersistenciaException ex) {
@@ -195,6 +202,10 @@ public class RetiroSinCuentaForm extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.setVisible(false);
     }//GEN-LAST:event_cancelarBotonActionPerformed
+
+    private void txtFolioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFolioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtFolioActionPerformed
 
     
     

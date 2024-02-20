@@ -59,9 +59,7 @@ public interface IClienteDAO {
 
     public Transferencia TransferirFeria(TransferenciaNuevaDTO transferencia) throws PersistenciaException;
 
-    public double obtenerSaldoCuenta(int noCuenta) throws PersistenciaException;
-
-    public void actualizarSaldoCuenta(int noCuenta, double nuevoSaldo) throws PersistenciaException;
+    public boolean saldoSuficienteParaTransferencia(int idCliente, int noCuenta, double monto) throws PersistenciaException;
 
     public boolean validarFolioYContraseña(int folio, String contraseña) throws PersistenciaException;
 

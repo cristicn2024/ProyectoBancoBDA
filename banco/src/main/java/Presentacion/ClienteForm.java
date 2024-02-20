@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  * Clase que representa la interfaz de Clientes
@@ -88,27 +89,33 @@ public class ClienteForm extends javax.swing.JDialog {
         setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(672, 560));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        getContentPane().add(txtContraseña, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 260, 210, 20));
+        getContentPane().add(txtContraseña, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 260, 210, 25));
 
         txtUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtUsuarioActionPerformed(evt);
             }
         });
-        getContentPane().add(txtUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 230, 230, 20));
-        getContentPane().add(txtFechaNacimiento, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 200, 150, -1));
-        getContentPane().add(txtApellidoM, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 170, 170, 20));
+        getContentPane().add(txtUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 230, 230, 25));
+        getContentPane().add(txtFechaNacimiento, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 200, 150, 25));
+
+        txtApellidoM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtApellidoMActionPerformed(evt);
+            }
+        });
+        getContentPane().add(txtApellidoM, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 170, 170, 25));
 
         txtApellidoP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtApellidoPActionPerformed(evt);
             }
         });
-        getContentPane().add(txtApellidoP, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 140, 170, 20));
-        getContentPane().add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 110, 230, 20));
-        getContentPane().add(txtNumero, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 410, 110, 20));
-        getContentPane().add(txtColonia, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 380, 110, 20));
-        getContentPane().add(txtCalle, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 350, 130, 20));
+        getContentPane().add(txtApellidoP, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 140, 170, 25));
+        getContentPane().add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 110, 230, 25));
+        getContentPane().add(txtNumero, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 410, 25, 25));
+        getContentPane().add(txtColonia, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 380, 110, 25));
+        getContentPane().add(txtCalle, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 350, 130, 25));
 
         btnCancelar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnCancelar.setText("Regresar");
@@ -179,7 +186,16 @@ public class ClienteForm extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
-          cliente.setNombre(txtNombre.getText());
+        
+         if (txtNombre.getText().isEmpty() || txtApellidoM.getText().isEmpty() || txtApellidoP.getText().isEmpty() ||
+            txtFechaNacimiento.getText().isEmpty() || txtUsuario.getText().isEmpty() || txtContraseña.getText().isEmpty() ||
+            txtCalle.getText().isEmpty() || txtColonia.getText().isEmpty() || txtNumero.getText().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
+        return; // Detener la ejecución del método si algún campo está vacío
+    }
+
+        
+        cliente.setNombre(txtNombre.getText());
         cliente.setApellidoMaterno(txtApellidoM.getText());
         cliente.setApellidoPaterno(txtApellidoP.getText());
 
@@ -255,6 +271,10 @@ this.dispose();
     private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUsuarioActionPerformed
+
+    private void txtApellidoMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtApellidoMActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtApellidoMActionPerformed
 public String encriptarContraseña(String contraseña) throws NoSuchAlgorithmException{
            try {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
