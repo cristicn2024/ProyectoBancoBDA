@@ -63,8 +63,7 @@ public interface IClienteDAO {
 
     public boolean validarFolioYContraseña(int folio, String contraseña) throws PersistenciaException;
 
-    public void actualizarEstadoTransaccionesRetirosSinCuenta(int folio, String contraseña, String estado) throws PersistenciaException;
-
+    
     public List<Object[]> movimientosPorFecha(int idCliente, Date fecha);
 
     public List<Object[]> movimientosPorTipo(int idCliente, String tipo);
@@ -74,5 +73,10 @@ public interface IClienteDAO {
      public int obtenerIdCuentaPorNoCuenta(String noCuenta) throws PersistenciaException;
      
      public void realizarDeposito(int idCuenta, int idCuentaDestino, double montoDeposito) throws PersistenciaException;
+     
+    public void actualizarEstadoTransaccionesRetirosSinCuenta(int folioGenerado, String contraseña, String estado) throws PersistenciaException, SQLException;
+     
+     
+             
 }
 

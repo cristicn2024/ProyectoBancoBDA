@@ -14,6 +14,9 @@ import Persistencia.DAOS.IClienteDAO;
 import Persistencia.Excepciones.PersistenciaException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -182,19 +185,19 @@ public class RetiroSinCuentaForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void aceptarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarBotonActionPerformed
-    folioGenerado = Integer.parseInt(txtFolio.getText());
-        contraseñaGenerada = txtContraseña.getText();
-
+   folioGenerado = Integer.parseInt(txtFolio.getText());
+    contraseñaGenerada = txtContraseña.getText();
+    
         try {
-
-            clienteDAO.actualizarEstadoTransaccionesRetirosSinCuenta(folioGenerado, contraseñaGenerada, "cobrado");
             
-            JOptionPane.showMessageDialog(this, "retiro extoso");
-            this.setVisible(false);
+            clienteDAO.actualizarEstadoTransaccionesRetirosSinCuenta(folioGenerado, contraseñaGenerada, "cobrado");
+
+           
         } catch (PersistenciaException ex) {
             Logger.getLogger(RetiroSinCuentaForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        } catch (SQLException ex) {
+          Logger.getLogger(RetiroSinCuentaForm.class.getName()).log(Level.SEVERE, null, ex);
+      }
         
     }//GEN-LAST:event_aceptarBotonActionPerformed
 
@@ -207,7 +210,8 @@ public class RetiroSinCuentaForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtFolioActionPerformed
 
-    
+        
+
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

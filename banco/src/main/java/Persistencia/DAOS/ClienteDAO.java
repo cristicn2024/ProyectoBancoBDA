@@ -199,6 +199,24 @@ public class ClienteDAO implements IClienteDAO {
             throw new PersistenciaException("No se pudo guardar el retiro sin cuenta", e);
         }
     }
+    
+public void actualizarEstadoTransaccionesRetirosSinCuenta(int folio, String contraseña, String estado) throws PersistenciaException, SQLException {
+    System.out.println("Actualizando estado de transacción con folio: " + folio + ", contraseña: " + contraseña + ", estado: " + estado);
+         PreparedStatement statement = connection.prepareStatement("UPDATE transaccionRetirosSinCuenta SET estado = ? WHERE folio = ? AND contraseña = ?")) {
+        statement.setString(1, estado);
+        statement.setInt(2, folio);
+        statement.setString(3, contraseña);
+        int rowsAffected = statement.executeUpdate();
+        if (rowsAffected != 1) {
+            throw new PersistenciaException("No se pudo actualizar el estado de la transacción");
+        }
+        System.out.println("Actualización exitosa. Filas afectadas: " + rowsAffected);
+    } catch (SQLException e) {
+        throw new SQLException("Error al actualizar el estado de la transacción", e);
+    }
+}
+
+
 
     @Override
     public int obtenerIdCuentaPorNoCuenta(String noCuenta) throws PersistenciaException {
@@ -374,22 +392,11 @@ public Transferencia TransferirFeria(TransferenciaNuevaDTO transferencia) throws
         }
     }
 
-    @Override
-    public void actualizarEstadoTransaccionesRetirosSinCuenta(int folio, String contraseña, String estado) throws PersistenciaException {
-        System.out.print("Actualizando estado de transaaciion con folio: " + folio + "contraseña:" + contraseña + "estado:" + estado);
-        try ( Connection connection = this.conexionBD.crearConexion();  PreparedStatement statement = connection.prepareStatement("UPDATE transaccionRetirosSinCuenta SET estado = ? WHERE folio = ? AND contraseña = ?")) {
-            statement.setString(1, estado);
-            statement.setInt(2, folio);
-            statement.setString(3, contraseña);
-            int rowsAffected = statement.executeUpdate();
-            if (rowsAffected != 1) {
-                throw new PersistenciaException("No se pudo actualizar el estado de la transacción");
-            }
-            System.out.print("Actualizacion exitosa. Filas Afectadas:" + rowsAffected);
-        } catch (SQLException e) {
-            throw new PersistenciaException("Error al actualizar el estado de la transacción", e);
-        }
-    }
+ 
+
+
+  
+
 
     @Override
     public List<Object[]> movimientosPorFecha(int idCliente, Date fecha) {

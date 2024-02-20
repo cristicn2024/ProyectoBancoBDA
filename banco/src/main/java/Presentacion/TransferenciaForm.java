@@ -189,13 +189,8 @@ public class TransferenciaForm extends javax.swing.JFrame {
         transferenciaDTO.setNoCuenta(Integer.parseInt(txtNodeCuenta.getText()));
         transferenciaDTO.setNoCuentaDestino(Integer.parseInt(txtNodeCuentaDestino.getText()));
         transferenciaDTO.setIdCliente(idCliente);
-         Transferencia transferenciaAgregada = clienteDAO.TransferirFeria(transferenciaDTO);
-          JOptionPane.showMessageDialog(this, "Transferencia generada con éxito");
-                CuentasForm c = new CuentasForm(idCliente);
-                c.setVisible(true);
-                this.setVisible(false);
 
-       /* // Verificar si el saldo es suficiente para la transferencia
+        // Verificar si el saldo es suficiente para la transferencia
         if (clienteDAO.saldoSuficienteParaTransferencia(idCliente, transferenciaDTO.getNoCuenta(), transferenciaDTO.getMonto())) {
             Transferencia transferenciaAgregada = clienteDAO.TransferirFeria(transferenciaDTO);
 
@@ -209,7 +204,7 @@ public class TransferenciaForm extends javax.swing.JFrame {
             }
         } else {
             JOptionPane.showMessageDialog(this, "Saldo insuficiente para realizar la transferencia.", "Error", JOptionPane.ERROR_MESSAGE);
-        }*/
+        }
 
     } catch (PersistenciaException e) {
         LOG.log(Level.SEVERE, "No se pudo realizar la transferencia", e);
@@ -229,6 +224,7 @@ public class TransferenciaForm extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.setVisible(false);
     }//GEN-LAST:event_cancelarBotonActionPerformed
+
 
     
 
