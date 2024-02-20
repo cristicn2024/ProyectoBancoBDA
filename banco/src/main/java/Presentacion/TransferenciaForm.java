@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Interfaz Grafica de transferencias
  * @author crist
  */
 public class TransferenciaForm extends javax.swing.JFrame {

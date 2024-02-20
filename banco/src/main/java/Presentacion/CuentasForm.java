@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
+ * Interfaz Grafica de las cuentas
  * @author crist
  */
 public class CuentasForm extends javax.swing.JFrame {
@@ -31,6 +31,7 @@ int idCliente;
     IClienteDAO clienteDAO;
     /**
      * Creates new form CuentasForm
+     * @param idCliente
      */
     public CuentasForm(int idCliente) {
         this.idCliente=idCliente;
@@ -39,8 +40,9 @@ int idCliente;
         initComponents();
     }
 
-    
-    
+    /**
+     * metodo que actualiza la tabla de las cuentas
+     */
     public void ConsultaCuentas(){
   DefaultTableModel modelo = (DefaultTableModel) Tabla.getModel();
     modelo.setRowCount(0);

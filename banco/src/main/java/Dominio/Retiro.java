@@ -7,7 +7,7 @@ package Dominio;
 import java.time.LocalDateTime;
 
 /**
- *
+ * Clase POJO de retiro
  * @author crist
  */
 public class Retiro {
@@ -19,9 +19,22 @@ public class Retiro {
   private int idCuenta;
   private String cobrado;
 
+    /**
+     * Contructor vacio
+     */
     public Retiro() {
     }
 
+    /**
+     * Constructor SIN id
+     * @param idTransaccion
+     * @param fechaHora
+     * @param monto
+     * @param folio
+     * @param contraseña
+     * @param idCuenta
+     * @param cobrado
+     */
     public Retiro(int idTransaccion, LocalDateTime fechaHora, double monto, int folio, String contraseña, int idCuenta, String cobrado) {
         this.idTransaccion = idTransaccion;
         this.fechaHora = fechaHora;
@@ -32,6 +45,15 @@ public class Retiro {
         this.cobrado = cobrado;
     }
 
+    /**
+     * Contructor SIN id
+     * @param fechaHora
+     * @param monto
+     * @param folio
+     * @param contraseña
+     * @param idCuenta
+     * @param cobrado
+     */
     public Retiro(LocalDateTime fechaHora, double monto, int folio, String contraseña, int idCuenta, String cobrado) {
         this.fechaHora = fechaHora;
         this.monto = monto;
@@ -41,66 +63,125 @@ public class Retiro {
         this.cobrado = cobrado;
     }
 
+     /**
+     * Regresa el idTransaccion
+     * @return
+     */
     public int getIdTransaccion() {
         return idTransaccion;
     }
 
+    /**
+     * Establece el idTransaccion
+     * @param idTransaccion
+     */
     public void setIdTransaccion(int idTransaccion) {
         this.idTransaccion = idTransaccion;
     }
 
+    /**
+     * Regresa la fecha y hora
+     * @return
+     */
     public LocalDateTime getFechaHora() {
         return fechaHora;
     }
 
+    /**
+     * Establece la fecha y hora
+     * @param fechaHora
+     */
     public void setFechaHora(LocalDateTime fechaHora) {
         this.fechaHora = fechaHora;
     }
 
+    /**
+     * Regresa el monto
+     * @return
+     */
     public double getMonto() {
         return monto;
     }
 
+    /**
+     * Establece el monto
+     * @param monto
+     */
     public void setMonto(double monto) {
         this.monto = monto;
     }
 
+    /**
+     * Regresa el folio
+     * @return
+     */
     public int getFolio() {
         return folio;
     }
 
+    /**
+     * Establece el folio
+     * @param folio
+     */
     public void setFolio(int folio) {
         this.folio = folio;
     }
 
+    /**
+     * Regresa la contraseña
+     * @return
+     */
     public String getContraseña() {
         return contraseña;
     }
 
+    /**
+     * Establece la contraseña
+     * @param contraseña
+     */
     public void setContraseña(String contraseña) {
         this.contraseña = contraseña;
     }
 
+    /**
+     * Regresa el id de la cuenta
+     * @return
+     */
     public int getIdCuenta() {
         return idCuenta;
     }
 
+    /**
+     * Establece el id de la cuenta
+     * @param idCuenta
+     */
     public void setIdCuenta(int idCuenta) {
         this.idCuenta = idCuenta;
     }
 
+    /**
+     * Regresa el estado
+     * @return
+     */
     public String getCobrado() {
         return cobrado;
     }
 
+    /**
+     * Establece el estado
+     * @param cobrado
+     */
     public void setCobrado(String cobrado) {
         this.cobrado = cobrado;
     }
 
+    /**
+     * Regresa la cadena con todos los atributos
+     * @return
+     */
     @Override
     public String toString() {
-        return "Retiro{" + "idTransaccion=" + idTransaccion + ", fechaHora=" + fechaHora + ", monto=" + monto + ", folio=" + folio + ", contrase\u00f1a=" + contraseña + ", idCuenta=" + idCuenta + ", cobrado=" + cobrado + '}';
+        return "RetiroNuevoDTO{" + "idTransaccion=" + idTransaccion + ", fechaHora=" + fechaHora + ", monto=" + monto + ", folio=" + folio + ", contrase\u00f1a=" + contraseña + ", idCuenta=" + idCuenta + ", cobrado=" + cobrado + '}';
     }
-  
   
 }

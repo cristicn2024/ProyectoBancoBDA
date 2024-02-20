@@ -28,7 +28,7 @@ import java.util.List;
 public interface IClienteDAO {
 
     /**
-     * Metodo para agregar cliente
+     * Metodo abstracto para agregar cliente
      *
      * @param cliente
      * @return
@@ -37,7 +37,7 @@ public interface IClienteDAO {
     public Cliente agregarCliente(ClienteNuevoDTO cliente) throws PersistenciaException;
 
     /**
-     * Metodo para agregar domicilio
+     * Metodo abstracto para agregar domicilio
      *
      * @param direccion
      * @return
@@ -45,35 +45,130 @@ public interface IClienteDAO {
      */
     public Domicilio agregarDomicilio(DomicilioNuevoDTO direccion) throws PersistenciaException;
 
+    /**
+     * Metodo para agregar cuenta
+     * @param cuenta
+     * @return
+     * @throws PersistenciaException
+     */
     public Cuenta agregarCuenta(CuentaNuevaDTO cuenta) throws PersistenciaException;
 
+    /**
+     *  Metodo para mostrar cuenta
+     * @param id
+     * @return
+     * @throws PersistenciaException
+     */
     public List<Cuenta> mostrarCuentas(int id) throws PersistenciaException;
 
+    /**
+     *  Metodo abstracto para retirar sin cuenta
+     * @param retiro
+     * @return
+     * @throws PersistenciaException
+     */
     public Retiro RetirarFeria(RetiroNuevoDTO retiro) throws PersistenciaException;
 
+    /**
+     *  Metodo abstracto para obtener el id del cliente por su usuario
+     * @param nombreUsuario
+     * @return
+     * @throws PersistenciaException
+     */
     public int obtenerIdClientePorUsuario(String nombreUsuario) throws PersistenciaException;
 
+    /**
+     * Metodo abstracto para verificar el usuaario y contraseña
+     * @param usuario
+     * @param contraseñaEncriptada
+     * @return
+     * @throws PersistenciaException
+     */
     public boolean verificarCredenciales(String usuario, String contraseñaEncriptada) throws PersistenciaException;
 
+    /**
+     * Metodo abstracto para obtener la contraseña encriptada
+     * @param usuario
+     * @return
+     * @throws SQLException
+     */
     public String obtenerContraseñaEncriptada(String usuario) throws SQLException;
 
+    /**
+     * Metodo abstracto para transferencias
+     * @param transferencia
+     * @return
+     * @throws PersistenciaException
+     */
     public Transferencia TransferirFeria(TransferenciaNuevaDTO transferencia) throws PersistenciaException;
 
+    /**
+     * Metodo abstracto para validacion del saldo
+     * @param idCliente
+     * @param noCuenta
+     * @param monto
+     * @return
+     * @throws PersistenciaException
+     */
     public boolean saldoSuficienteParaTransferencia(int idCliente, int noCuenta, double monto) throws PersistenciaException;
 
+    /**
+     * Metodo abstracto para validar folio y contraseña
+     * @param folio
+     * @param contraseña
+     * @return
+     * @throws PersistenciaException
+     */
     public boolean validarFolioYContraseña(int folio, String contraseña) throws PersistenciaException;
 
-    
+    /**
+     * Metodo abstracto para el historial por fecha
+     * @param idCliente
+     * @param fecha
+     * @return
+     */
     public List<Object[]> movimientosPorFecha(int idCliente, Date fecha);
 
+    /**
+     * Metodo abstracto para el historial por tipo
+     * @param idCliente
+     * @param tipo
+     * @return
+     */
     public List<Object[]> movimientosPorTipo(int idCliente, String tipo);
 
+    /**
+     * Metodo abstracto para cancelar una cuenta
+     * @param idCuenta
+     * @throws PersistenciaException
+     */
     public void cancelarCuenta(int idCuenta) throws PersistenciaException;
     
-     public int obtenerIdCuentaPorNoCuenta(String noCuenta) throws PersistenciaException;
+    /**
+     * Metodo abstracto para obtener el id de la cuenta por su numero
+     * @param noCuenta
+     * @return
+     * @throws PersistenciaException
+     */
+    public int obtenerIdCuentaPorNoCuenta(String noCuenta) throws PersistenciaException;
      
-     public void realizarDeposito(int idCuenta, int idCuentaDestino, double montoDeposito) throws PersistenciaException;
+    /**
+     * Metodo abstracto para realizar un deposito
+     * @param idCuenta
+     * @param idCuentaDestino
+     * @param montoDeposito
+     * @throws PersistenciaException
+     */
+    public void realizarDeposito(int idCuenta, int idCuentaDestino, double montoDeposito) throws PersistenciaException;
      
+    /**
+     * Metodo abstracto para actualizar el estado de retiros sin cuenta
+     * @param folioGenerado
+     * @param contraseña
+     * @param estado
+     * @throws PersistenciaException
+     * @throws SQLException
+     */
     public void actualizarEstadoTransaccionesRetirosSinCuenta(int folioGenerado, String contraseña, String estado) throws PersistenciaException, SQLException;
      
      

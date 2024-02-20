@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Interfaz Grafica de generar folios
  * @author crist
  */
 public class GenerarFolioForm extends javax.swing.JFrame {
@@ -32,6 +32,9 @@ public class GenerarFolioForm extends javax.swing.JFrame {
     IClienteDAO clienteDAO;
     IConexionBD conexionBD;
 
+    /**
+     * Creates new form GenerarFolioForm
+     */
     public GenerarFolioForm() {
         conexionBD = new ConexionBD(cadenaConexion, usuario, contra);
         clienteDAO = new ClienteDAO(conexionBD); // Inicializa clienteDAO aquí

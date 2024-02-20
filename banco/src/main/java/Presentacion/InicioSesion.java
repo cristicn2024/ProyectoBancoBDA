@@ -167,7 +167,14 @@ public class InicioSesion extends javax.swing.JFrame {
         RetiroSinCuentaForm rscf = new RetiroSinCuentaForm();
         rscf.setVisible(true);
     }//GEN-LAST:event_btnRetiroSinCuentaActionPerformed
-public String encriptarContraseña(String contraseña) throws NoSuchAlgorithmException{
+
+    /**
+     * Metodo que encripta la contraseña
+     * @param contraseña
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
+    public String encriptarContraseña(String contraseña) throws NoSuchAlgorithmException{
            try {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         byte[] hash = md.digest(contraseña.getBytes(StandardCharsets.UTF_8));

@@ -19,7 +19,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
+ * Interfaz Grafica del historial
  * @author crist
  */
 public class ConsultasForm extends javax.swing.JFrame {
@@ -33,6 +33,10 @@ public class ConsultasForm extends javax.swing.JFrame {
     String contra = "78357Cas";
     IClienteDAO clienteDAO;
 
+    /**
+     * Creates new form HistorialForm
+     * @param idCliente
+     */
     public ConsultasForm(int idCliente) {
         this.idCliente = idCliente;
         conexionBD = new ConexionBD(cadenaConexion, usuario, contra);

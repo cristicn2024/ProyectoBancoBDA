@@ -5,7 +5,7 @@
 package Persistencia.Controlador;
 
 /**
- *
+ * Clase ControladorPersistencia
  * @author INEGI
  */
 public class ControladorPersistencia {

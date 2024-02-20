@@ -24,7 +24,7 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 /**
- *
+ * Interfaz Grafica de retiros sin cuenta
  * @author crist
  */
 public class RetiroSinCuentaForm extends javax.swing.JFrame {
@@ -41,6 +41,9 @@ public class RetiroSinCuentaForm extends javax.swing.JFrame {
     IClienteDAO clienteDAO;
     IConexionBD conexionBD;
 
+    /**
+     * Creates new form RetiroSinCuentaForm
+     */
     public RetiroSinCuentaForm() {
         conexionBD = new ConexionBD(cadenaConexion, usuario, contra);
         clienteDAO = new ClienteDAO(conexionBD); 
@@ -68,6 +71,8 @@ public class RetiroSinCuentaForm extends javax.swing.JFrame {
         actualizarEtiquetaTiempo();
     }
 
+    
+    // metodo que crea el temporizador
     private void actualizarEtiquetaTiempo() {
         int minutos = tiempoRestanteEnSegundos / 60;
         int segundos = tiempoRestanteEnSegundos % 60;

@@ -22,7 +22,7 @@ public class ConexionBD implements IConexionBD {
     private static final Logger LOG = Logger.getLogger(ConexionBD.class.getName());
 
     /**
-     *
+     * Contructor que inicializa la clase
      * @param cadenaConexion
      * @param usuario
      * @param contra

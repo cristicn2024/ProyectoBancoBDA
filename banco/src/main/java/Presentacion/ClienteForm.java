@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
- * Clase que representa la interfaz de Clientes
+ *      Interfaz Grafica de regustrar clientes
  * @author INEGI
  */
 public class ClienteForm extends javax.swing.JDialog {
@@ -42,6 +42,8 @@ public class ClienteForm extends javax.swing.JDialog {
 
     /**
      * Creates new form ClienteForm
+     * @param parent
+     * @param modal
      */
     public ClienteForm(java.awt.Frame parent, boolean modal) {
         
@@ -114,7 +116,7 @@ public class ClienteForm extends javax.swing.JDialog {
         });
         getContentPane().add(txtApellidoP, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 140, 170, 25));
         getContentPane().add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 110, 230, 25));
-        getContentPane().add(txtNumero, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 410, 25, 25));
+        getContentPane().add(txtNumero, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 410, 110, 25));
         getContentPane().add(txtColonia, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 380, 110, 25));
         getContentPane().add(txtCalle, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 350, 130, 25));
 
@@ -304,7 +306,14 @@ this.dispose();
     private void txtApellidoMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtApellidoMActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtApellidoMActionPerformed
-public String encriptarContraseña(String contraseña) throws NoSuchAlgorithmException{
+
+    /**
+     * Metodo que encripta la contraseña
+     * @param contraseña
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
+    public String encriptarContraseña(String contraseña) throws NoSuchAlgorithmException{
            try {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         byte[] hash = md.digest(contraseña.getBytes(StandardCharsets.UTF_8));

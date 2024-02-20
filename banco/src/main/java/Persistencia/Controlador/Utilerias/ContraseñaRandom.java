@@ -7,7 +7,7 @@ package Persistencia.Controlador.Utilerias;
 import java.security.SecureRandom;
 
 /**
- *
+ * Clase para generar la contraseña del folio
  * @author crist
  */
 public class ContraseñaRandom {

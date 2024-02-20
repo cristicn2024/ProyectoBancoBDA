@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Interfaz Grafica de crear cuentas
  * @author crist
  */
 public class CrearCuentaForm extends javax.swing.JFrame {
@@ -33,6 +33,10 @@ public class CrearCuentaForm extends javax.swing.JFrame {
     IClienteDAO clienteDAO;
     IConexionBD conexionBD;
 
+    /**
+     * Creates new form CrearCuentasForm
+     * @param idCliente
+     */
     public CrearCuentaForm(int idCliente) {
         this.idCliente = idCliente;
         cuenta = new Cuenta();

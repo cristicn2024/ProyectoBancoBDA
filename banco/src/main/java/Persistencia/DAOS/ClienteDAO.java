@@ -163,6 +163,7 @@ public class ClienteDAO implements IClienteDAO {
         return cuentas;
     }
 
+    @Override
     public Retiro RetirarFeria(RetiroNuevoDTO retiro) throws PersistenciaException {
         String sentenciaSQL = "INSERT INTO transaccionRetirosSinCuenta (FechaHora, monto, folio, contraseña, noCuenta, estado) "
                 + "VALUES (?, ?, ?, ?, ?, 'no cobrado')";
@@ -199,25 +200,23 @@ public class ClienteDAO implements IClienteDAO {
             throw new PersistenciaException("No se pudo guardar el retiro sin cuenta", e);
         }
     }
-    
-public void actualizarEstadoTransaccionesRetirosSinCuenta(int folio, String contraseña, String estado) throws PersistenciaException, SQLException {
-    System.out.println("Actualizando estado de transacción con folio: " + folio + ", contraseña: " + contraseña + ", estado: " + estado);
-    try (Connection connection = this.conexionBD.crearConexion();
-         PreparedStatement statement = connection.prepareStatement("UPDATE transaccionRetirosSinCuenta SET estado = ? WHERE folio = ? AND contraseña = ?")) {
-        statement.setString(1, estado);
-        statement.setInt(2, folio);
-        statement.setString(3, contraseña);
-        int rowsAffected = statement.executeUpdate();
-        if (rowsAffected != 1) {
-            throw new PersistenciaException("No se pudo actualizar el estado de la transacción");
+
+    @Override
+    public void actualizarEstadoTransaccionesRetirosSinCuenta(int folio, String contraseña, String estado) throws PersistenciaException, SQLException {
+        System.out.println("Actualizando estado de transacción con folio: " + folio + ", contraseña: " + contraseña + ", estado: " + estado);
+        try ( Connection connection = this.conexionBD.crearConexion();  PreparedStatement statement = connection.prepareStatement("UPDATE transaccionRetirosSinCuenta SET estado = ? WHERE folio = ? AND contraseña = ?")) {
+            statement.setString(1, estado);
+            statement.setInt(2, folio);
+            statement.setString(3, contraseña);
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected != 1) {
+                throw new PersistenciaException("No se pudo actualizar el estado de la transacción");
+            }
+            System.out.println("Actualización exitosa. Filas afectadas: " + rowsAffected);
+        } catch (SQLException e) {
+            throw new SQLException("Error al actualizar el estado de la transacción", e);
         }
-        System.out.println("Actualización exitosa. Filas afectadas: " + rowsAffected);
-    } catch (SQLException e) {
-        throw new SQLException("Error al actualizar el estado de la transacción", e);
     }
-}
-
-
 
     @Override
     public int obtenerIdCuentaPorNoCuenta(String noCuenta) throws PersistenciaException {
@@ -298,67 +297,66 @@ public void actualizarEstadoTransaccionesRetirosSinCuenta(int folio, String cont
     }
 
     @Override
-public Transferencia TransferirFeria(TransferenciaNuevaDTO transferencia) throws PersistenciaException {
-    try (Connection conexion = this.conexionBD.crearConexion()) {
-        conexion.setAutoCommit(false);
+    public Transferencia TransferirFeria(TransferenciaNuevaDTO transferencia) throws PersistenciaException {
+        try ( Connection conexion = this.conexionBD.crearConexion()) {
+            conexion.setAutoCommit(false);
 
-        // Actualizar saldo de cuenta origen
-        String sqlUpdateOrigen = "UPDATE cuentas SET Saldo = Saldo - ? WHERE IdCliente = ? AND idCuenta = ? AND Saldo >= ?";
-        try (PreparedStatement comandoUpdateOrigen = conexion.prepareStatement(sqlUpdateOrigen)) {
-            comandoUpdateOrigen.setDouble(1, transferencia.getMonto());
-            comandoUpdateOrigen.setInt(2, transferencia.getIdCliente());
-            comandoUpdateOrigen.setInt(3, transferencia.getNoCuenta());
-            comandoUpdateOrigen.setDouble(4, transferencia.getMonto());
-            int registrosModificados = comandoUpdateOrigen.executeUpdate();
-            if (registrosModificados != 1) {
-                conexion.rollback();
-                throw new PersistenciaException("No se pudo actualizar el saldo de la cuenta origen");
+            // Actualizar saldo de cuenta origen
+            String sqlUpdateOrigen = "UPDATE cuentas SET Saldo = Saldo - ? WHERE IdCliente = ? AND idCuenta = ? AND Saldo >= ?";
+            try ( PreparedStatement comandoUpdateOrigen = conexion.prepareStatement(sqlUpdateOrigen)) {
+                comandoUpdateOrigen.setDouble(1, transferencia.getMonto());
+                comandoUpdateOrigen.setInt(2, transferencia.getIdCliente());
+                comandoUpdateOrigen.setInt(3, transferencia.getNoCuenta());
+                comandoUpdateOrigen.setDouble(4, transferencia.getMonto());
+                int registrosModificados = comandoUpdateOrigen.executeUpdate();
+                if (registrosModificados != 1) {
+                    conexion.rollback();
+                    throw new PersistenciaException("No se pudo actualizar el saldo de la cuenta origen");
+                }
             }
+
+            // Actualizar saldo de cuenta destino
+            String sqlUpdateDestino = "UPDATE cuentas SET Saldo = Saldo + ? WHERE idCuenta = ?";
+            try ( PreparedStatement comandoUpdateDestino = conexion.prepareStatement(sqlUpdateDestino)) {
+                comandoUpdateDestino.setDouble(1, transferencia.getMonto());
+                comandoUpdateDestino.setInt(2, transferencia.getNoCuentaDestino());
+                int registrosModificados = comandoUpdateDestino.executeUpdate();
+                if (registrosModificados != 1) {
+                    conexion.rollback();
+                    throw new PersistenciaException("No se pudo actualizar el saldo de la cuenta destino");
+                }
+            }
+
+            // Insertar transacción
+            String sqlInsertTransaccion = "INSERT INTO transaccionTransferencias (FechaHora, monto, noCuentaDestino, IdCliente, noCuenta) VALUES (NOW(), ?, ?, ?, ?)";
+            try ( PreparedStatement comandoInsertTransaccion = conexion.prepareStatement(sqlInsertTransaccion, Statement.RETURN_GENERATED_KEYS)) {
+                comandoInsertTransaccion.setDouble(1, transferencia.getMonto());
+                comandoInsertTransaccion.setInt(2, transferencia.getNoCuentaDestino());
+                comandoInsertTransaccion.setInt(3, transferencia.getIdCliente());
+                comandoInsertTransaccion.setInt(4, transferencia.getNoCuenta());
+                int registrosModificados = comandoInsertTransaccion.executeUpdate();
+                if (registrosModificados != 1) {
+                    conexion.rollback();
+                    throw new PersistenciaException("No se pudo insertar la transacción");
+                }
+
+                ResultSet generatedKeys = comandoInsertTransaccion.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    int idTransaccion = generatedKeys.getInt(1);
+                    conexion.commit();
+                    return new Transferencia(idTransaccion, LocalDateTime.now(), transferencia.getMonto(), transferencia.getNoCuentaDestino(), transferencia.getIdCliente(), transferencia.getNoCuenta());
+                } else {
+                    conexion.rollback();
+                    throw new PersistenciaException("No se pudo obtener el ID de la transacción generada");
+                }
+            }
+        } catch (SQLException e) {
+            LOG.log(Level.SEVERE, "Error al transferir fondos", e);
+            throw new PersistenciaException("Error al transferir fondos", e);
         }
-
-        // Actualizar saldo de cuenta destino
-        String sqlUpdateDestino = "UPDATE cuentas SET Saldo = Saldo + ? WHERE idCuenta = ?";
-        try (PreparedStatement comandoUpdateDestino = conexion.prepareStatement(sqlUpdateDestino)) {
-            comandoUpdateDestino.setDouble(1, transferencia.getMonto());
-            comandoUpdateDestino.setInt(2, transferencia.getNoCuentaDestino());
-            int registrosModificados = comandoUpdateDestino.executeUpdate();
-            if (registrosModificados != 1) {
-                conexion.rollback();
-                throw new PersistenciaException("No se pudo actualizar el saldo de la cuenta destino");
-            }
-        }
-
-        // Insertar transacción
-        String sqlInsertTransaccion = "INSERT INTO transaccionTransferencias (FechaHora, monto, noCuentaDestino, IdCliente, noCuenta) VALUES (NOW(), ?, ?, ?, ?)";
-        try (PreparedStatement comandoInsertTransaccion = conexion.prepareStatement(sqlInsertTransaccion, Statement.RETURN_GENERATED_KEYS)) {
-            comandoInsertTransaccion.setDouble(1, transferencia.getMonto());
-            comandoInsertTransaccion.setInt(2, transferencia.getNoCuentaDestino());
-            comandoInsertTransaccion.setInt(3, transferencia.getIdCliente());
-            comandoInsertTransaccion.setInt(4, transferencia.getNoCuenta());
-            int registrosModificados = comandoInsertTransaccion.executeUpdate();
-            if (registrosModificados != 1) {
-                conexion.rollback();
-                throw new PersistenciaException("No se pudo insertar la transacción");
-            }
-
-            ResultSet generatedKeys = comandoInsertTransaccion.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                int idTransaccion = generatedKeys.getInt(1);
-                conexion.commit();
-                return new Transferencia(idTransaccion, LocalDateTime.now(), transferencia.getMonto(), transferencia.getNoCuentaDestino(), transferencia.getIdCliente(), transferencia.getNoCuenta());
-            } else {
-                conexion.rollback();
-                throw new PersistenciaException("No se pudo obtener el ID de la transacción generada");
-            }
-        }
-    } catch (SQLException e) {
-        LOG.log(Level.SEVERE, "Error al transferir fondos", e);
-        throw new PersistenciaException("Error al transferir fondos", e);
     }
-}
 
-
-
+    @Override
     public boolean saldoSuficienteParaTransferencia(int idCliente, int noCuenta, double monto) throws PersistenciaException {
         String sentenciaSQL = "SELECT Saldo FROM cuentas WHERE IdCliente = ? AND idCuenta = ?";
         try ( Connection conexion = this.conexionBD.crearConexion();  PreparedStatement comandoSQL = conexion.prepareStatement(sentenciaSQL)) {
@@ -392,12 +390,6 @@ public Transferencia TransferirFeria(TransferenciaNuevaDTO transferencia) throws
             throw new PersistenciaException("Error al validar el folio y la contraseña", e);
         }
     }
-
- 
-
-
-  
-
 
     @Override
     public List<Object[]> movimientosPorFecha(int idCliente, Date fecha) {
@@ -521,6 +513,7 @@ public Transferencia TransferirFeria(TransferenciaNuevaDTO transferencia) throws
 
     }
 
+    @Override
     public void realizarDeposito(int idCuenta, int idCuentaDestino, double montoDeposito) {
         String sql = "CALL RealizarDepositoSinRegistro(?, ?, ?);";
 

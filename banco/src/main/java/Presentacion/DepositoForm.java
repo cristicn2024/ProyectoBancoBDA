@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Interfaz Grafica de los depositos
  * @author crist
  */
 public class DepositoForm extends javax.swing.JFrame {
@@ -27,6 +27,9 @@ public class DepositoForm extends javax.swing.JFrame {
     IClienteDAO clienteDAO;
     IConexionBD conexionBD;
 
+    /**
+     * Creates new form DepositoForm
+     */
     public DepositoForm() {
         conexionBD = new ConexionBD(cadenaConexion, usuario, contra);
         clienteDAO = new ClienteDAO(conexionBD); // Inicializa clienteDAO aquí
