@@ -19,6 +19,7 @@ import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -187,6 +188,41 @@ public class ClienteForm extends javax.swing.JDialog {
 
     private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
         
+        if (txtNombre.getText().isEmpty() || txtApellidoM.getText().isEmpty() || txtApellidoP.getText().isEmpty() ||
+            txtFechaNacimiento.getText().isEmpty() || txtUsuario.getText().isEmpty() || txtContraseña.getText().isEmpty() ||
+            txtCalle.getText().isEmpty() || txtColonia.getText().isEmpty() || txtNumero.getText().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
+        return; // Detener la ejecución del método si algún campo está vacío
+    }
+
+    String fechaTexto = txtFechaNacimiento.getText();
+    DateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+    Date fechaNacimiento;
+    try {
+        fechaNacimiento = new Date(formatoFecha.parse(fechaTexto).getTime());
+    } catch (ParseException ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Formato de fecha incorrecto.", "Error", JOptionPane.ERROR_MESSAGE);
+        return; // Detener la ejecución si la fecha de nacimiento no es válida
+    }
+
+    System.out.println("Fecha de nacimiento ingresada: " + fechaTexto);
+
+// Calculamos la edad en base a la fecha actual
+Calendar cNacimiento = Calendar.getInstance();
+cNacimiento.setTime(fechaNacimiento);
+Calendar cActual = Calendar.getInstance();
+int edad = cActual.get(Calendar.YEAR) - cNacimiento.get(Calendar.YEAR);
+if (cActual.get(Calendar.MONTH) < cNacimiento.get(Calendar.MONTH) ||
+        (cActual.get(Calendar.MONTH) == cNacimiento.get(Calendar.MONTH) && cActual.get(Calendar.DAY_OF_MONTH) < cNacimiento.get(Calendar.DAY_OF_MONTH))) {
+    edad--;
+}
+System.out.println("Edad calculada: " + edad);
+
+if (edad < 18) {
+    JOptionPane.showMessageDialog(this, "Debes ser mayor de edad para registrarte.", "Error", JOptionPane.ERROR_MESSAGE);
+    return; // Detener la ejecución si es menor de edad
+}
          if (txtNombre.getText().isEmpty() || txtApellidoM.getText().isEmpty() || txtApellidoP.getText().isEmpty() ||
             txtFechaNacimiento.getText().isEmpty() || txtUsuario.getText().isEmpty() || txtContraseña.getText().isEmpty() ||
             txtCalle.getText().isEmpty() || txtColonia.getText().isEmpty() || txtNumero.getText().isEmpty()) {
@@ -199,14 +235,7 @@ public class ClienteForm extends javax.swing.JDialog {
         cliente.setApellidoMaterno(txtApellidoM.getText());
         cliente.setApellidoPaterno(txtApellidoP.getText());
 
-        String fechaTexto = txtFechaNacimiento.getText();
-        DateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            Date fechaNacimiento = new Date(formatoFecha.parse(fechaTexto).getTime());
-            cliente.setFechaNacimiento(fechaNacimiento);
-        } catch (ParseException ex) {
-            ex.printStackTrace();
-        }
+       
         cliente.setUsuario(txtUsuario.getText());
        cliente.setContraseña(txtContraseña.getText());
        
