@@ -163,16 +163,16 @@ public class ClienteDAO implements IClienteDAO {
     }
 
     public Retiro RetirarFeria(RetiroNuevoDTO retiro) throws PersistenciaException {
-    String sentenciaSQL = "INSERT INTO transaccionRetirosSinCuenta (FechaHora, monto, folio, contraseña, IdCliente, estado) "
+    String sentenciaSQL = "INSERT INTO transaccionRetirosSinCuenta (FechaHora, monto, folio, contraseña, noCuenta, estado) "
             + "VALUES (?, ?, ?, ?, ?, 'no cobrado')";
     try (Connection conexion = this.conexionBD.crearConexion(); 
          PreparedStatement comandoSQL = conexion.prepareStatement(sentenciaSQL, Statement.RETURN_GENERATED_KEYS)) {
 
         comandoSQL.setObject(1, LocalDateTime.now());
         comandoSQL.setDouble(2, retiro.getMonto());
-        comandoSQL.setInt(3, -1); // El folio se calculará en el trigger, se puede enviar un valor cualquiera aquí
+        comandoSQL.setInt(3, 0); // El folio se calculará en el trigger, se puede enviar un valor cualquiera aquí
         comandoSQL.setString(4, retiro.getContraseña());
-        comandoSQL.setInt(5, retiro.getIdCliente());
+        comandoSQL.setInt(5, retiro.getIdCuenta());
 
         int registrosModificados = comandoSQL.executeUpdate();
         LOG.log(Level.INFO, "Se agregó con éxito {0} retiro(s) sin cuenta", registrosModificados);
@@ -191,7 +191,7 @@ public class ClienteDAO implements IClienteDAO {
         }
 
         // Crear un objeto Retiro con la información obtenida
-        Retiro retiroGenerado = new Retiro(idTransaccion, LocalDateTime.now(), retiro.getMonto(), folioGenerado, retiro.getContraseña(), retiro.getIdCliente(), "no cobrado");
+        Retiro retiroGenerado = new Retiro(idTransaccion, LocalDateTime.now(), retiro.getMonto(), folioGenerado, retiro.getContraseña(), retiro.getIdCuenta(), "no cobrado");
 
         return retiroGenerado;
     } catch (Exception e) {
@@ -200,6 +200,25 @@ public class ClienteDAO implements IClienteDAO {
     }
 }
 
+@Override
+    public int obtenerIdCuentaPorNoCuenta(String noCuenta) throws PersistenciaException {
+        String CONSULTA_OBTENER_ID_POR_CUENTA = "SELECT idCliente FROM cuentas WHERE idCuenta = ?";
+        try ( Connection conexion = this.conexionBD.crearConexion();  PreparedStatement comandoSQL = conexion.prepareStatement(CONSULTA_OBTENER_ID_POR_CUENTA)) {
+
+            comandoSQL.setString(1, noCuenta);
+
+            try ( ResultSet resultado = comandoSQL.executeQuery()) {
+                if (resultado.next()) {
+                    return resultado.getInt(1);
+                } else {
+                    throw new PersistenciaException("No se encontró ningún cliente con el numero de cuenta proporcionado: " + noCuenta);
+                }
+            }
+        } catch (SQLException e) {
+            LOG.log(Level.SEVERE, "Error al obtener el ID del cliente por numero de cuenta", e);
+            throw new PersistenciaException("Error al obtener el ID del cliente numero de cuenta", e);
+        }
+    }
 
 
     @Override
@@ -475,5 +494,24 @@ public class ClienteDAO implements IClienteDAO {
         }
 
     }
+    
+    public void realizarDeposito(int idCuenta, int idCuentaDestino, double montoDeposito) {
+    String sql = "CALL RealizarDepositoSinRegistro(?, ?, ?);";
+    
+    try (Connection connection = this.conexionBD.crearConexion();
+         PreparedStatement statement = connection.prepareStatement(sql)) {
+         
+        statement.setInt(1, idCuenta);
+        statement.setInt(2, idCuentaDestino);
+        statement.setDouble(3, montoDeposito);
+        
+        
+        statement.executeUpdate();
+        System.out.println("Depósito realizado con éxito.");
+        
+    } catch (SQLException e) {
+        System.out.println("Error al realizar el depósito: " + e.getMessage());
+    }
+}
 
 }

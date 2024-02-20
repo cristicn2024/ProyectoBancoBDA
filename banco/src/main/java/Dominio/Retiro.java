@@ -16,28 +16,28 @@ public class Retiro {
   private double monto;
   private int folio;
   private String contraseña;
-  private int idCliente;
+  private int idCuenta;
   private String cobrado;
 
     public Retiro() {
     }
 
-    public Retiro(int idTransaccion, LocalDateTime fechaHora, double monto, int folio, String contraseña, int idCliente, String cobrado) {
+    public Retiro(int idTransaccion, LocalDateTime fechaHora, double monto, int folio, String contraseña, int idCuenta, String cobrado) {
         this.idTransaccion = idTransaccion;
         this.fechaHora = fechaHora;
         this.monto = monto;
         this.folio = folio;
         this.contraseña = contraseña;
-        this.idCliente = idCliente;
+        this.idCuenta = idCuenta;
         this.cobrado = cobrado;
     }
 
-    public Retiro(LocalDateTime fechaHora, double monto, int folio, String contraseña, int idCliente, String cobrado) {
+    public Retiro(LocalDateTime fechaHora, double monto, int folio, String contraseña, int idCuenta, String cobrado) {
         this.fechaHora = fechaHora;
         this.monto = monto;
         this.folio = folio;
         this.contraseña = contraseña;
-        this.idCliente = idCliente;
+        this.idCuenta = idCuenta;
         this.cobrado = cobrado;
     }
 
@@ -81,12 +81,12 @@ public class Retiro {
         this.contraseña = contraseña;
     }
 
-    public int getIdCliente() {
-        return idCliente;
+    public int getIdCuenta() {
+        return idCuenta;
     }
 
-    public void setIdCliente(int idCliente) {
-        this.idCliente = idCliente;
+    public void setIdCuenta(int idCuenta) {
+        this.idCuenta = idCuenta;
     }
 
     public String getCobrado() {
@@ -99,7 +99,7 @@ public class Retiro {
 
     @Override
     public String toString() {
-        return "Retiro{" + "idTransaccion=" + idTransaccion + ", fechaHora=" + fechaHora + ", monto=" + monto + ", folio=" + folio + ", contrase\u00f1a=" + contraseña + ", idCliente=" + idCliente + ", cobrado=" + cobrado + '}';
+        return "Retiro{" + "idTransaccion=" + idTransaccion + ", fechaHora=" + fechaHora + ", monto=" + monto + ", folio=" + folio + ", contrase\u00f1a=" + contraseña + ", idCuenta=" + idCuenta + ", cobrado=" + cobrado + '}';
     }
   
   

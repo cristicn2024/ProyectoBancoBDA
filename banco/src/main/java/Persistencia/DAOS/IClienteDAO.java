@@ -72,5 +72,9 @@ public interface IClienteDAO {
     public List<Object[]> movimientosPorTipo(int idCliente, String tipo);
 
     public void cancelarCuenta(int idCuenta) throws PersistenciaException;
+    
+     public int obtenerIdCuentaPorNoCuenta(String noCuenta) throws PersistenciaException;
+     
+     public void realizarDeposito(int idCuenta, int idCuentaDestino, double montoDeposito) throws PersistenciaException;
 }
 

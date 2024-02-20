@@ -15,6 +15,7 @@ import Persistencia.Excepciones.PersistenciaException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -65,6 +66,12 @@ public class CrearCuentaForm extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("Saldo:");
+
+        txtSaldo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSaldoActionPerformed(evt);
+            }
+        });
 
         cancelarBoton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cancelarBoton.setText("Cancelar");
@@ -137,9 +144,15 @@ public class CrearCuentaForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void aceptarBotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarBotoActionPerformed
-        CuentaNuevaDTO cueDTO = new CuentaNuevaDTO();
+        double saldo = Double.parseDouble(txtSaldo.getText());
 
-        cueDTO.setSaldo(Double.parseDouble(txtSaldo.getText()));
+        if (saldo < 0) {
+            JOptionPane.showMessageDialog(this, "El saldo no puede ser menor a cero.", "Error", JOptionPane.ERROR_MESSAGE);
+            return; // Detener la ejecución si el saldo es menor a cero
+        }
+
+        CuentaNuevaDTO cueDTO = new CuentaNuevaDTO();
+        cueDTO.setSaldo(saldo);
         cueDTO.setEstado("activa");
         Date fechaApertura = new Date();
         cueDTO.setFechaApertura(new java.sql.Date(fechaApertura.getTime()));
@@ -167,6 +180,10 @@ public class CrearCuentaForm extends javax.swing.JFrame {
         // Llamar al método ConsultaCuentas() después de mostrar la ventana CuentasForm
         cuentasForm.ConsultaCuentas();
     }//GEN-LAST:event_cancelarBotonActionPerformed
+
+    private void txtSaldoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSaldoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSaldoActionPerformed
 
    
     // Variables declaration - do not modify//GEN-BEGIN:variables

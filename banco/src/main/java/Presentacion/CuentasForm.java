@@ -80,6 +80,7 @@ int idCliente;
         jLabel1 = new javax.swing.JLabel();
         cancelarCuentaBoton = new javax.swing.JButton();
         historialBotno = new javax.swing.JButton();
+        depositoBoton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -151,13 +152,21 @@ int idCliente;
             }
         });
 
+        depositoBoton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        depositoBoton.setText("Depositar");
+        depositoBoton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                depositoBotonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(54, 54, 54)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(regresarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(55, 55, 55)
@@ -167,6 +176,9 @@ int idCliente;
                         .addGap(38, 38, 38)
                         .addComponent(jButton1))
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(141, 141, 141)
+                        .addComponent(depositoBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(cancelarCuentaBoton)
                         .addGap(32, 32, 32)
                         .addComponent(agregarCuentaBoton))
@@ -182,7 +194,8 @@ int idCliente;
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(agregarCuentaBoton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cancelarCuentaBoton))
+                    .addComponent(cancelarCuentaBoton)
+                    .addComponent(depositoBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(41, 41, 41)
@@ -254,12 +267,19 @@ this.setVisible(false);        // TODO add your handling code here:
     consultas.setVisible(true);
     }//GEN-LAST:event_historialBotnoActionPerformed
 
+    private void depositoBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_depositoBotonActionPerformed
+        // TODO add your handling code here:
+         DepositoForm deposito = new DepositoForm();
+    deposito.setVisible(true);
+    }//GEN-LAST:event_depositoBotonActionPerformed
+
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Tabla;
     private javax.swing.JButton agregarCuentaBoton;
     private javax.swing.JButton cancelarCuentaBoton;
+    private javax.swing.JButton depositoBoton;
     private javax.swing.JButton generarFolioBoton;
     private javax.swing.JButton historialBotno;
     private javax.swing.JButton jButton1;

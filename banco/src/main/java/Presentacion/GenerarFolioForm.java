@@ -52,7 +52,7 @@ public class GenerarFolioForm extends javax.swing.JFrame {
         txtMonto = new javax.swing.JTextField();
         aceptarBoton = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
-        txtUsuario = new javax.swing.JTextField();
+        txtNoCuenta = new javax.swing.JTextField();
         cancelarBoton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -72,7 +72,7 @@ public class GenerarFolioForm extends javax.swing.JFrame {
         });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel3.setText("Usuario:");
+        jLabel3.setText("No. de cuenta:");
 
         cancelarBoton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cancelarBoton.setText("Cancelar");
@@ -95,18 +95,21 @@ public class GenerarFolioForm extends javax.swing.JFrame {
                         .addGroup(layout.createSequentialGroup()
                             .addGap(53, 53, 53)
                             .addComponent(cancelarBoton)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(aceptarBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                             .addGap(57, 57, 57)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(txtMonto)
-                                .addComponent(txtUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)))))
-                .addContainerGap(66, Short.MAX_VALUE))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(txtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel3)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(txtNoCuenta)))
+                            .addGap(35, 35, 35))))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -116,7 +119,7 @@ public class GenerarFolioForm extends javax.swing.JFrame {
                 .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNoCuenta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -134,17 +137,17 @@ public class GenerarFolioForm extends javax.swing.JFrame {
 
     private void aceptarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarBotonActionPerformed
         // TODO add your handling code here:
-        String nombreUsuario = txtUsuario.getText();
+        String noCuenta = txtNoCuenta.getText();
 
         try {
-            int idCliente = clienteDAO.obtenerIdClientePorUsuario(nombreUsuario);
+            int idCuenta = clienteDAO.obtenerIdCuentaPorNoCuenta(noCuenta);
 
             RetiroNuevoDTO retiroDTO = new RetiroNuevoDTO();
             retiroDTO.setMonto(Double.parseDouble(txtMonto.getText()));
             
             // No es necesario establecer el folio aquí, se calculará automáticamente en el método RetirarFeria
             retiroDTO.setContraseña(generarContraseñaAleatoria(8));
-            retiroDTO.setIdCliente(idCliente);
+            retiroDTO.setIdCuenta(idCuenta);
             retiroDTO.setCobrado("null");
             // No es necesario establecer la fecha y hora aquí, se establecerá automáticamente en el método RetirarFeria
 
@@ -175,6 +178,6 @@ public class GenerarFolioForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JTextField txtMonto;
-    private javax.swing.JTextField txtUsuario;
+    private javax.swing.JTextField txtNoCuenta;
     // End of variables declaration//GEN-END:variables
 }
