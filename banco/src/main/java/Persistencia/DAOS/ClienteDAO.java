@@ -202,6 +202,7 @@ public class ClienteDAO implements IClienteDAO {
     
 public void actualizarEstadoTransaccionesRetirosSinCuenta(int folio, String contraseña, String estado) throws PersistenciaException, SQLException {
     System.out.println("Actualizando estado de transacción con folio: " + folio + ", contraseña: " + contraseña + ", estado: " + estado);
+    try (Connection connection = this.conexionBD.crearConexion();
          PreparedStatement statement = connection.prepareStatement("UPDATE transaccionRetirosSinCuenta SET estado = ? WHERE folio = ? AND contraseña = ?")) {
         statement.setString(1, estado);
         statement.setInt(2, folio);
